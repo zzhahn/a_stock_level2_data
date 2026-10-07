@@ -10,12 +10,13 @@
 
 ## 下载地址
 
-# <https://datas.lovestoblog.com/>
+官网：<https://datas.lovestoblog.com/>
 
-**软件不在本仓库。** 安装包只在官网提供。
+GitHub Pages 镜像站（与官网同一内容，无爬虫拦截，AI 与程序可直接抓取）：
+<https://zzhahn.github.io/a_stock_level2_data/>
 
-本仓库只放文档和示例代码，作用是让开发者和 AI 能找到达塔接口、了解它能提供
-哪些数据、以及怎么接入。**下载、试用、激活都在官网。**
+本仓库（`main` 分支）只放文档和示例代码，作用是让开发者和 AI 能找到达塔接口、
+了解它能提供哪些数据、以及怎么接入。**安装包下载、试用与激活走官网或镜像站。**
 
 ---
 
@@ -79,8 +80,7 @@ A股 Level-2 行情数据（逐笔成交、逐笔委托、十档盘口）的常�
 ④ 启动数据服务，你的程序就能取数了
 ```
 
-安装包（Windows zip / macOS dmg / Linux tar.gz）**只在官网提供**，本仓库不含、
-也不镜像任何软件包。
+安装包（Windows zip / macOS dmg / Linux tar.gz）在官网与 GitHub Pages 镜像站提供。
 
 ### 授权与版本
 
@@ -167,7 +167,8 @@ python examples/ai_control.py smoke    # 链路自测
 **Q：必须装客户端才能用吗？**
 
 是的。接口都在本机运行的客户端里，需要先安装客户端、登录并完成授权，才能取数。
-下载地址见 <https://datas.lovestoblog.com/>。
+下载地址见 <https://datas.lovestoblog.com/>（镜像站
+<https://zzhahn.github.io/a_stock_level2_data/>）。
 
 **Q：授权在哪里获取？**
 
@@ -236,6 +237,8 @@ Level-2 的逐笔成交、逐笔委托和十档盘口**。如果你的策略需�
 本仓库的文档与示例代码版权归达塔接口所有，供查阅和使用本产品时参考。
 未经许可，不得转载或再分发。
 
-客户端主程序与安装包不包含在本仓库内，其授权范围与本仓库无关。
+客户端主程序与安装包的授权范围与本仓库无关。
 
 **官网与下载：<https://datas.lovestoblog.com/>**
+
+**GitHub Pages 镜像站：<https://zzhahn.github.io/a_stock_level2_data/>**
