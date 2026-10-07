@@ -1,0 +1,9 @@
+/* ── 全站免责声明 ────────────────────────────────────────────────────── */
+.site-disclaimer{position:fixed;left:0;right:0;bottom:0;z-index:9000;display:flex;align-items:center;justify-content:center;gap:9px;min-height:30px;padding:6px 16px;border-top:1px solid rgba(245,150,20,.48);background:rgba(7,14,28,.96);box-shadow:0 -5px 18px rgba(0,0,0,.2);color:#b9c4d7;font:10px/1.45 "Microsoft YaHei",Arial,sans-serif;text-align:center}
+.site-disclaimer-title{flex:0 0 auto;color:#ffd27a;font-weight:bold;letter-spacing:.5px}
+.site-disclaimer-text{max-width:1400px}
+.site-disclaimer strong{color:#f7d898}
+@media(max-width:560px){
+  .site-disclaimer{display:block;padding:6px 10px;font-size:9px;line-height:1.5}
+  .site-disclaimer-title{margin-right:5px}
+}

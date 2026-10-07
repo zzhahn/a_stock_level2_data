@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-labelledby="icon-title icon-desc">
+    <title id="icon-title">达塔接口 data interface</title>
+    <desc id="icon-desc">中国红印章风格的 data interface 图标，包含 d、t 和向上的数据曲线</desc>
+    <defs>
+        <linearGradient id="di-red-b" x1="14" y1="10" x2="113" y2="118" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#d52b3d"/>
+            <stop offset="1" stop-color="#a60e29"/>
+        </linearGradient>
+        <linearGradient id="di-gold-b" x1="18" y1="79" x2="108" y2="17" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#f3ba45"/>
+            <stop offset="1" stop-color="#fff2bd"/>
+        </linearGradient>
+        <clipPath id="di-clip-b">
+            <rect x="5" y="5" width="118" height="118" rx="32"/>
+        </clipPath>
+    </defs>
+    <rect x="5" y="5" width="118" height="118" rx="32" fill="url(#di-red-b)"/>
+    <circle cx="64" cy="64" r="48" fill="none" stroke="#fff" stroke-width="2" opacity=".18"/>
+    <g clip-path="url(#di-clip-b)">
+        <path d="M14 103h101" fill="none" stroke="#fff" stroke-linecap="round" stroke-width="3" opacity=".15"/>
+        <path d="M17 55 37 40l17 8 24-25 32-12" fill="none" stroke="#8e1328" stroke-linecap="round" stroke-linejoin="round" stroke-width="12" opacity=".28"/>
+        <path d="M17 55 37 40l17 8 24-25 32-12" fill="none" stroke="url(#di-gold-b)" stroke-linecap="round" stroke-linejoin="round" stroke-width="6"/>
+        <circle cx="17" cy="55" r="3" fill="#fff2bd"/>
+        <circle cx="110" cy="11" r="5" fill="#fff2bd"/>
+    </g>
+    <g fill="#fff">
+        <path fill-rule="evenodd" d="M45 58h8v40h-8v-2c-3 2-6 3-10 3-10 0-17-7-17-17s7-17 17-17c4 0 7 1 10 3V58Zm-9 15c-5 0-9 3-9 9s4 9 9 9 9-3 9-9-4-9-9-9Z"/>
+        <path d="M71 59h9v10h10v7H80v11c0 4 2 6 6 6 2 0 3-1 5-1v7c-2 1-5 2-8 2-8 0-12-4-12-12V76h-6v-7h6V59Z"/>
+    </g>
+</svg>

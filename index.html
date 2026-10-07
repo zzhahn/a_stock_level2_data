@@ -1,0 +1,2098 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>达塔接口</title>
+<link rel="icon" href="favicon.svg?v=73" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/market_workspace.css">
+<link rel="stylesheet" href="assets/css/disclaimer.css?v=20260907-disclaimer-1">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"Microsoft YaHei",Arial,sans-serif;background:#1a1a2e;color:#e0e0e0;height:100vh;overflow:hidden;display:flex;flex-direction:column}
+
+/* ── 顶部管理栏 ── */
+.admin-bar{display:flex;align-items:center;gap:8px;padding:6px 12px;background:#0f3460;flex-shrink:0;min-height:36px;flex-wrap:wrap}
+.admin-bar .sep{width:1px;height:20px;background:#1a1a3e;margin:0 2px}
+.admin-bar input{padding:4px 8px;border:1px solid #1a1a3e;border-radius:3px;background:#1a1a2e;color:#e0e0e0;font-size:12px;outline:none}
+.admin-bar input:focus{border-color:#e94560}
+.admin-bar .btn{padding:4px 12px;border:none;border-radius:3px;cursor:pointer;font-size:12px;font-weight:bold;color:#fff;transition:all .15s}
+.admin-bar .btn:active{transform:scale(.95)}
+.admin-bar .btn-auth{background:#3377EB}
+.admin-bar .btn-out{background:#e53935}
+.admin-bar .btn-card{background:#f59614}
+.admin-bar .btn-start{background:#38a141}
+.admin-bar .btn-stop{background:#e53935}
+.admin-bar .btn-exit{background:#444;color:#888}
+.admin-bar .st{font-size:11px;font-weight:bold;white-space:nowrap}
+.admin-bar .st-run{color:#27ae60}
+.admin-bar .st-stop{color:#c0392b}
+.admin-bar .st-warn{color:#e67e22}
+.admin-bar .st-info{color:#9b9bcd;font-size:10px}
+
+/* ── API测试主体 ── */
+.app{display:flex;flex:1;overflow:hidden;min-height:0;position:relative}
+.sidebar{width:260px;min-width:200px;background:#16213e;border-right:1px solid #0f3460;display:flex;flex-direction:column;min-height:0}
+.sidebar-header{padding:8px 10px 8px 12px;background:#0f3460;font-size:13px;font-weight:bold;color:#e94560;display:flex;align-items:center;gap:8px}
+.sidebar-header-title{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.method-gallery-trigger{margin-left:auto;flex-shrink:0;padding:4px 7px;border:1px solid rgba(78,201,176,.55);border-radius:4px;background:rgba(78,201,176,.08);color:#8ee8d2;font-size:10px;font-weight:bold;letter-spacing:.2px;cursor:pointer;transition:all .2s}
+.method-gallery-trigger:hover,.method-gallery-trigger.active{background:#4EC9B0;color:#10202b;border-color:#4EC9B0;box-shadow:0 0 14px rgba(78,201,176,.28)}
+.method-gallery-trigger span{font-size:12px;margin-left:2px}
+.search-box{padding:6px 10px;border-bottom:1px solid #0f3460}
+.search-box input{width:100%;padding:6px 8px;border:1px solid #0f3460;border-radius:3px;background:#1a1a2e;color:#e0e0e0;font-size:12px;outline:none}
+.search-box input:focus{border-color:#e94560}
+.nav{flex:1;overflow-y:auto;min-height:0}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.method-gallery{position:absolute;left:260px;right:0;top:0;bottom:0;z-index:40;display:none;flex-direction:column;overflow:hidden;background:linear-gradient(145deg,#111d38 0%,#10172d 54%,#0d1427 100%);border-left:1px solid rgba(78,201,176,.45);box-shadow:-18px 0 38px rgba(0,0,0,.32)}
+.method-gallery.open{display:flex;animation:methodGalleryIn .24s ease-out both}
+@keyframes methodGalleryIn{from{opacity:0;transform:translateX(-18px)}to{opacity:1;transform:translateX(0)}}
+.method-gallery-head{display:flex;align-items:flex-start;gap:20px;padding:24px 28px 18px;background:radial-gradient(circle at 82% 0%,rgba(51,119,235,.28),transparent 34%),radial-gradient(circle at 20% 0%,rgba(233,69,96,.18),transparent 38%);border-bottom:1px solid rgba(78,201,176,.18);flex-shrink:0}
+.method-gallery-kicker{color:#4EC9B0;font:10px/1.2 Consolas,"Microsoft YaHei",sans-serif;letter-spacing:2px;text-transform:uppercase}
+.method-gallery-head h2{margin-top:7px;color:#f4f8ff;font-size:24px;letter-spacing:1px}
+.method-gallery-head p{margin-top:7px;color:#8f9bb8;font-size:11px}
+.method-gallery-metrics{display:flex;gap:8px;margin-left:auto;padding-top:2px}
+.method-gallery-metric{min-width:70px;padding:9px 12px;border:1px solid rgba(78,201,176,.2);border-radius:8px;background:rgba(16,30,55,.72);text-align:center}
+.method-gallery-metric strong{display:block;color:#f3f7ff;font:700 20px/1 Consolas,"Microsoft YaHei",sans-serif}
+.method-gallery-metric span{display:block;margin-top:5px;color:#8190ad;font-size:10px}
+.method-gallery-close{margin-left:2px;padding:5px 9px;border:1px solid #344568;border-radius:5px;background:rgba(17,27,49,.72);color:#b7c3dd;font-size:11px;cursor:pointer;transition:all .18s}
+.method-gallery-close:hover{color:#fff;border-color:#e94560;background:rgba(233,69,96,.18)}
+.method-gallery-toolbar{display:flex;align-items:center;gap:12px;padding:12px 24px;border-bottom:1px solid rgba(52,69,104,.65);background:rgba(12,20,39,.62);flex-shrink:0}
+.method-gallery-filters{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.method-gallery-filter{padding:5px 10px;border:1px solid #2c3d61;border-radius:5px;background:transparent;color:#93a2bd;font-size:10px;cursor:pointer;transition:all .18s}
+.method-gallery-filter:hover{border-color:#4EC9B0;color:#d7fff6}
+.method-gallery-filter.active{border-color:#4EC9B0;background:rgba(78,201,176,.16);color:#a9f4e4;box-shadow:0 0 10px rgba(78,201,176,.12)}
+.method-gallery-search{display:flex;align-items:center;gap:6px;margin-left:auto;width:min(270px,30vw);padding:5px 9px;border:1px solid #2c3d61;border-radius:5px;background:#121d35;color:#7e8faa}
+.method-gallery-search span{font-size:14px;color:#4EC9B0}
+.method-gallery-search input{width:100%;border:0;outline:0;background:transparent;color:#dce7f6;font-size:11px}
+.method-gallery-search input::placeholder{color:#62718c}
+.method-gallery-count{color:#71819f;font-size:10px;white-space:nowrap}
+.method-gallery-grid{flex:1;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(225px,1fr));align-content:start;gap:13px;padding:18px 24px 28px}
+.method-card{position:relative;display:flex;flex-direction:column;min-height:168px;padding:13px 16px 11px;border:1px solid rgba(83,107,151,.48);border-radius:11px;background:linear-gradient(145deg,rgba(27,43,75,.92),rgba(16,28,53,.94));color:#dbe6f8;text-align:left;cursor:pointer;overflow:hidden;transition:transform .18s,border-color .18s,box-shadow .18s;animation:methodCardIn .32s ease both}
+.method-card::before{content:"";position:absolute;left:0;top:0;width:42px;height:2px;background:#4EC9B0;box-shadow:0 0 14px rgba(78,201,176,.55)}
+.method-card::after{content:"";position:absolute;right:-28px;top:-38px;width:92px;height:92px;border-radius:50%;background:rgba(51,119,235,.11);pointer-events:none}
+.method-card:hover{transform:translateY(-3px);border-color:rgba(78,201,176,.88);box-shadow:0 10px 24px rgba(0,0,0,.26),0 0 0 1px rgba(78,201,176,.12)}
+@keyframes methodCardIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.method-card-ws::before{background:#e94560;box-shadow:0 0 14px rgba(233,69,96,.55)}
+.method-card-market::before{background:#3377EB;box-shadow:0 0 14px rgba(51,119,235,.55)}
+.method-card-top{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-shrink:0}
+.method-card-product{color:#4EC9B0;font:700 10px/1 Consolas,"Microsoft YaHei",sans-serif;letter-spacing:1px}
+.method-card-ws .method-card-product{color:#ff8ea3}
+.method-card-kind{padding:3px 5px;border:1px solid rgba(128,154,198,.4);border-radius:3px;color:#9eafd0;font:9px/1 Consolas,"Microsoft YaHei",sans-serif}
+.method-card-title{position:relative;z-index:1;flex-shrink:0;margin-top:10px;min-height:18px;color:#f0f5ff;font-size:14px;line-height:1.3;font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.method-card-desc{position:relative;z-index:1;display:-webkit-box;flex-shrink:0;overflow:hidden;margin-top:6px;min-height:31px;color:#93a3c0;font-size:10px;line-height:1.55;-webkit-box-orient:vertical;-webkit-line-clamp:2}
+.method-card-path{position:relative;z-index:1;flex-shrink:0;margin-top:auto;padding-top:8px;color:#6fd8c4;font:10px/1.2 Consolas,"Microsoft YaHei",sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.method-card-footer{position:relative;z-index:1;display:flex;flex-shrink:0;align-items:center;justify-content:space-between;gap:8px;margin-top:7px;padding-top:6px;border-top:1px solid rgba(71,93,136,.36);color:#6f7f9d;font-size:9px}
+.method-card-arrow{color:#a7b7d4}
+.method-card-arrow b{color:#4EC9B0;font-size:13px}
+.method-gallery-empty{grid-column:1/-1;padding:70px 20px;text-align:center;color:#71819f;font-size:12px}
+.btn-big{padding:6px 14px;border:none;border-radius:3px;cursor:pointer;font-size:12px;font-weight:bold;transition:all .15s;color:#fff}
+.btn-send{background:#e94560}.btn-send:hover{background:#c73652}
+.btn-clear{background:#555;color:#ccc}.btn-clear:hover{background:#666}
+.api-bar{padding:4px 12px;background:#16213e;border-bottom:1px solid #0f3460;display:flex;align-items:center;gap:8px;min-height:28px}
+.api-bar .api-name{color:#e94560;font-size:14px;font-weight:bold}
+.api-bar .api-path{color:#4EC9B0;font-family:Consolas,monospace;font-size:12px}
+.api-bar .stats{margin-left:auto;display:flex;gap:4px}
+.api-bar .stat{background:#0f3460;padding:1px 8px;border-radius:3px;font-size:10px}
+.api-bar .stat b{color:#e94560}
+.placeholder{text-align:center;padding:60px 20px;color:#555;font-size:16px}
+.json-key{color:#9CDCFE}.json-str{color:#CE9178}.json-num{color:#B5CEA8}.json-bool{color:#569CD6}.json-null{color:#808080}
+.warn-bar{background:#e53935;color:#fff;padding:8px 12px;text-align:center;font-size:12px;display:none;flex-shrink:0}
+.warn-bar.show{display:block}
+.warn-bar a{color:#ffcdd2;font-weight:bold}
+.ver-bar{background:#e67e22;color:#fff;padding:8px 12px;text-align:center;font-size:12px;display:none;flex-shrink:0}
+.ver-bar.show{display:block}
+.py-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.76);z-index:10000;justify-content:center;align-items:center;padding:18px}
+.py-modal-card{width:min(980px,96vw);height:min(820px,92vh);display:flex;flex-direction:column;background:#1a1a2e;border:1px solid #3377EB;border-radius:8px;box-shadow:0 8px 32px rgba(0,0,0,.5);overflow:hidden}
+.py-modal-head{display:flex;align-items:center;gap:8px;padding:8px 12px;background:#0f3460;color:#e94560;font-size:13px;font-weight:bold;flex-shrink:0}
+.py-modal-head .py-modal-actions{margin-left:auto;display:flex;align-items:center;gap:6px}
+.py-modal-actions button,.py-modal-actions a{padding:4px 10px;border:1px solid #3377EB;border-radius:3px;background:#3377EB;color:#fff;font-size:11px;cursor:pointer;text-decoration:none;font-weight:normal}
+.py-modal-actions a{background:#1a1a2e;color:#4EC9B0;border-color:#4EC9B0}
+.py-modal-actions .py-close{background:#444;border-color:#666;color:#ccc}
+.py-modal-note{padding:7px 12px;color:#aaa;font-size:11px;line-height:1.65;background:#16213e;border-bottom:1px solid #0f3460;flex-shrink:0}
+.py-modal-note code{color:#4EC9B0}
+.py-code{flex:1;overflow:auto;margin:0;padding:12px;background:#111827;color:#d4d4d4;font:12px/1.5 Consolas,"Courier New",monospace;white-space:pre;tab-size:4}
+/* ── 启动公告 ── */
+.announcement-overlay{position:fixed;inset:0;z-index:20000;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(7,13,28,.84);backdrop-filter:blur(4px);cursor:pointer}
+.announcement-overlay.is-hidden{display:none}
+.announcement-card{width:min(520px,calc(100vw - 32px));max-height:calc(100vh - 40px);overflow:auto;padding:24px 26px 22px;border:1px solid rgba(78,201,176,.58);border-radius:12px;background:linear-gradient(145deg,#1b2c4c,#121d35);box-shadow:0 18px 50px rgba(0,0,0,.45),0 0 0 1px rgba(51,119,235,.12);text-align:left;cursor:default}
+.announcement-badge{display:inline-block;padding:4px 8px;border:1px solid rgba(78,201,176,.55);border-radius:4px;color:#8ee8d2;font-size:11px;font-weight:bold;letter-spacing:1px}
+.announcement-card h1{margin-top:14px;color:#f2f6ff;font-size:22px;letter-spacing:1px}
+.announcement-meta{display:flex;gap:20px;margin-top:14px;color:#8fa4c4;font-size:12px}
+.announcement-meta strong{margin-left:4px;color:#f2f6ff;font-weight:normal}
+.announcement-section-label{margin-top:20px;color:#8ee8d2;font-size:12px;font-weight:bold}
+.announcement-list{margin:9px 0 0;padding-left:19px;color:#b8c5dc;font-size:13px;line-height:1.8}
+.announcement-list li{margin-bottom:8px}
+.announcement-list li::marker{color:#4EC9B0}
+.announcement-actions{display:flex;gap:12px;margin-top:22px;align-items:center;justify-content:flex-end}
+.announcement-btn-download{display:inline-flex;align-items:center;gap:6px;padding:9px 20px;border-radius:6px;background:linear-gradient(135deg,#00b4d8,#0077b6);color:#fff;font-size:13px;font-weight:bold;text-decoration:none;box-shadow:0 4px 14px rgba(0,180,216,.38);transition:all .2s ease}
+.announcement-btn-download:hover{background:linear-gradient(135deg,#00c2e8,#008ac5);box-shadow:0 6px 18px rgba(0,180,216,.55);color:#fff}
+.announcement-btn-enter{padding:9px 22px;border:1px solid rgba(78,201,176,.4);border-radius:6px;background:rgba(26,44,76,.85);color:#8ee8d2;font-size:13px;font-weight:bold;cursor:pointer;transition:all .2s ease}
+.announcement-btn-enter:hover{background:rgba(38,64,110,1);border-color:#4EC9B0;color:#fff}
+.announcement-btn-enter:focus{outline:2px solid #4EC9B0;outline-offset:3px}
+/* 品牌 */
+.brand{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.brand-icon{width:26px;height:26px;border-radius:6px;display:block;object-fit:contain;background:transparent}
+.brand-text{font-size:15px;font-weight:bold;background:linear-gradient(90deg,#e94560,#f0a0b0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:1px}
+.brand-sub{font-size:9px;color:#555;margin-left:-2px;margin-top:3px}
+.kefu-btn{position:relative}.kefu-pop{position:absolute;right:0;top:100%;z-index:999;background:#1a1a2e;border:1px solid #e67e22;border-radius:8px;padding:10px;gap:12px;white-space:nowrap}
+.download-menu{position:relative;display:inline-block;flex-shrink:0}
+.download-btn{font-size:10px;padding:2px 8px;border:1px solid #4EC9B0;border-radius:3px;background:transparent;color:#4EC9B0;cursor:pointer;white-space:nowrap}
+.download-btn:hover{background:#173d4a}
+.download-pop{display:none;position:absolute;left:0;top:calc(100% + 4px);z-index:1001;min-width:190px;padding:6px;background:#1a1a2e;border:1px solid #4EC9B0;border-radius:5px;box-shadow:0 6px 18px rgba(0,0,0,.45)}
+.download-menu.open .download-pop{display:block}
+.download-pop .download-title{padding:3px 8px 6px;color:#aaa;font-size:10px;border-bottom:1px solid #0f3460;white-space:nowrap}
+.download-pop a{display:block;padding:7px 8px;color:#4EC9B0;text-decoration:none;font-size:11px;white-space:nowrap}
+.download-pop a:hover{background:#0f3460;color:#fff}
+
+/* 小屏仍保持左侧目录可见；顶部管理项横向滚动，不占用下方目录高度。 */
+@media(max-width:820px){
+  .admin-bar{height:36px;min-height:36px;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;padding:6px 8px;scrollbar-width:thin}
+  .admin-bar>*{flex-shrink:0}
+  #adminBar>span[style*="flex:1"]{flex:0 0 8px!important}
+  .app{min-width:0}
+  .sidebar{width:210px;min-width:210px;flex:0 0 210px;overflow:hidden}
+  .main{min-width:0}
+  .sidebar-header{padding:7px 9px;font-size:12px}
+  .method-gallery{left:0}
+  .method-gallery-head{padding:18px 18px 14px}
+  .method-gallery-head h2{font-size:20px}
+  .method-gallery-grid{grid-template-columns:repeat(auto-fill,minmax(205px,1fr));padding:14px 16px 24px}
+  .method-gallery-toolbar{padding:10px 16px}
+  .product-nav{padding:3px 6px 2px;flex-shrink:0}
+  .search-box{padding:5px 6px;flex-shrink:0}
+}
+
+@media(max-width:560px){
+  .sidebar{width:186px;min-width:186px;flex-basis:186px}
+  .sidebar-header{padding:6px 8px;font-size:11px}
+  .method-gallery-head{display:block;padding:14px 14px 12px}
+  .method-gallery-head h2{font-size:18px}
+  .method-gallery-head p{font-size:10px}
+  .method-gallery-metrics{margin:12px 0 0}
+  .method-gallery-close{position:absolute;right:12px;top:12px}
+  .method-gallery-toolbar{display:block;padding:8px 12px}
+  .method-gallery-search{width:100%;margin:8px 0 0}
+  .method-gallery-count{display:block;margin-top:7px}
+  .method-gallery-grid{grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:9px;padding:12px}
+  .method-card{min-height:158px;padding:12px}
+  .product-nav{padding:2px 5px 1px}
+  .product-nav-caption{font-size:9px}
+  .product-nav-button{min-height:25px;padding:4px 6px;gap:4px;font-size:10px}
+  .product-nav-code{width:32px;font-size:9px}
+  .product-nav-badge,.product-nav-status{font-size:8px}
+  .product-nav-link{padding:1px 3px;font-size:8px}
+  .search-box input{padding:5px 6px;font-size:11px}
+  .market-endpoint{padding-left:14px!important;padding-right:7px!important}
+  .market-endpoint-name{font-size:11px}
+  .market-endpoint-path{margin-left:30px;font-size:8px}
+}
+
+@media(max-height:560px){
+  .product-nav{max-height:calc(100vh - 190px);overflow-y:auto;flex:0 1 auto;min-height:0}
+  .nav{min-height:80px}
+}
+</style>
+<link rel="stylesheet" href="assets/css/design-tokens.css?v=20260901-style-4">
+<link rel="stylesheet" href="assets/css/site-shell.css?v=20260901-style-4">
+<link rel="stylesheet" href="assets/css/workbench-theme.css?v=20260902-old-palette-1">
+<link rel="stylesheet" href="assets/css/ui_gallery.css?v=20260906-ui-gallery-1">
+</head>
+<body class="site-page site-page--workbench">
+<div id="announcementOverlay" class="announcement-overlay" role="dialog" aria-modal="true" aria-labelledby="announcementTitle" aria-describedby="announcementText" onclick="closeAnnouncementOnBackdrop(event)">
+  <div class="announcement-card" role="document">
+    <div class="announcement-badge">版本更新 · v85</div>
+    <h1 id="announcementTitle">最新版本升级</h1>
+    <div class="announcement-meta"><span>版本<strong id="announcementVersion"></strong></span><span>更新时间<strong id="announcementTime"></strong></span></div>
+    <div class="announcement-section-label">核心升级亮点</div>
+    <ul id="announcementText" class="announcement-list"></ul>
+    <div style="margin-top:10px;padding:8px 12px;background:rgba(78,201,176,.08);border:1px dashed rgba(78,201,176,.4);border-radius:6px;font-size:12px;color:#d0d7de">📥 <strong>各平台安装包已就绪：</strong>支持 Windows、macOS (Intel 与 Apple Silicon) 及 Linux，请前往 <a href="download.html" style="color:#4EC9B0;font-weight:bold;text-decoration:underline">下载中心 ↗</a></div>
+    <div class="announcement-actions">
+      <a href="download.html" class="announcement-btn-download">🚀 前往下载中心</a>
+      <button type="button" id="announcementContinue" class="announcement-btn-enter" autofocus onclick="closeAnnouncement()">进入工作台</button>
+    </div>
+  </div>
+</div>
+<div id="d202NoticeModal" class="announcement-overlay" style="display:none;z-index:20010" onclick="if(event.target===this)closeD202Notice()">
+  <div class="announcement-card" style="width:min(520px,calc(100vw - 32px));border:1px solid rgba(230,126,34,.7);background:linear-gradient(145deg,#231d17,#14141e);box-shadow:0 18px 50px rgba(0,0,0,.6)">
+    <div class="announcement-badge" style="border-color:#e67e22;color:#f39c12">⚠️ D202 选型与稳定性须知</div>
+    <h2 style="margin-top:12px;color:#f5f5f5;font-size:18px;letter-spacing:.5px">D202 深度行情通道使用与选型建议</h2>
+    <div style="margin-top:14px;color:#d0d7de;font-size:13px;line-height:1.8">
+      <p style="margin-bottom:10px"><strong>D202 深度行情：</strong>优势在于性价比极高、支持早盘千万级千档竞价快照复盘；由于高频深度盘口并发压力较大，<strong>建议单次按需聚焦订阅核心股票池，尽量避免同时并发订阅过多只数</strong>。如果量化策略需要<strong>大容量、长时间高稳定性、超低延迟或高频极速打板监控</strong>，更推荐使用 <strong style="color:#4EC9B0">D201 深度行情</strong> 通道。</p>
+      <div style="background:rgba(78,201,176,.08);border-left:3px solid #4EC9B0;padding:8px 12px;border-radius:0 4px 4px 0;margin-bottom:10px;font-size:12px;color:#a8e6cf">
+        💪 <strong>持续进化承诺：</strong>技术团队正在全力攻坚底层调度与并发容错架构，持续加大力度提升 D202 的运行稳定性，致力于让更多用户都能用上便宜且好用的高品质 L2 深度行情！
+      </div>
+      <div style="background:rgba(230,126,34,.14);border-left:3px solid #e67e22;padding:10px 12px;border-radius:0 4px 4px 0;margin-bottom:8px">
+        <strong style="color:#f39c12">💡 官方量化选型黄金法则（同时适用于 D201 & D202）：</strong><br>
+        1. <strong>全市场全推监控：</strong>请优先选用 <strong style="color:#4EC9B0">D101</strong>（原生支持全市场全推，包含 203 个精细化全字段可选），专用于全市场大范围毫秒级极速扫描与优质标的粗筛；<br>
+        2. <strong>深度精准跟踪：</strong>D201（虽支持几千只订阅但同样不建议全推）与 D202 均为高精度 L2 深度行情。最佳实践是<strong>“用 D101 全推筛选出优质标的池后，再按需订阅 L2 深度行情”</strong>进行毫秒级精细盯盘与策略执行！
+      </div>
+    </div>
+    <div class="announcement-actions" style="margin-top:20px">
+      <button type="button" class="announcement-btn-download" style="background:linear-gradient(135deg,#e67e22,#d35400);box-shadow:0 4px 14px rgba(230,126,34,.35);cursor:pointer" onclick="closeD202Notice();selectD201();">切换到 D201 (高稳定低延迟)</button>
+      <button type="button" class="announcement-btn-enter" onclick="closeD202Notice()">继续使用 D202</button>
+    </div>
+  </div>
+</div>
+<div class="site-disclaimer" role="note" aria-label="免责声明"><span class="site-disclaimer-title">免责声明</span><span class="site-disclaimer-text">本网站及其中的数据、图表、程序与示例仅供学习、研究和技术交流使用，不构成任何投资建议、交易建议或收益承诺，不应作为买卖、持仓或其他投资决策的依据。市场有风险，投资需谨慎。</span></div>
+<div class="warn-bar" id="warnBar">请通过 <a href="http://localhost:9527">http://localhost:9527</a> 访问管理界面</div>
+<div class="ver-bar" id="verBar">发现新版本(v<span id="webVer"></span>)，当前 EXE 为(v<span id="exeVer"></span>)；更新内容：<span id="updateNote"></span>。请<a id="updateDownloadLink" data-client-download href="downloads/programs/data_interface_win_amd64.zip" style="color:#4EC9B0;font-weight:bold">下载更新客户端</a> 或前往 <a href="download.html" style="color:#8ee8d2;font-weight:bold;text-decoration:underline">下载中心</a></div>
+<div class="admin-bar site-header site-header--app" id="adminBar">
+  <div class="brand site-brand">
+    <img class="brand-icon site-brand-mark" src="favicon.svg?v=73" alt="" aria-hidden="true">
+    <span class="brand-text site-brand-name">达塔接口</span>
+  </div>
+  <div id="clientDownloadMenu" class="download-menu">
+    <button type="button" id="clientDownloadButton" class="download-btn" onclick="toggleClientDownloadMenu(event)" aria-haspopup="true" aria-expanded="false" title="选择客户端平台">下载客户端 ▾</button>
+    <div class="download-pop admin-popover" role="menu" aria-label="选择客户端平台">
+      <div class="download-title">选择要下载的客户端平台</div>
+      <a href="download.html" role="menuitem">打开完整下载中心</a>
+      <a data-platform-download="windows" href="downloads/programs/data_interface_win_amd64.zip" role="menuitem" download="data_interface_win_amd64.zip">Windows AMD64</a>
+      <a data-platform-download="macos" href="downloads/programs/data_interface_macos_arm64.dmg" role="menuitem" download="data_interface_macos_arm64.dmg">macOS ARM64 (Apple Silicon)</a>
+      <a data-platform-download="macos-intel" href="downloads/programs/data_interface_macos_x86_64.dmg" role="menuitem" download="data_interface_macos_x86_64.dmg">macOS Intel (x86_64)</a>
+      <a data-platform-download="linux" href="downloads/programs/data_interface_linux_amd64.tar.gz" role="menuitem" download="data_interface_linux_amd64.tar.gz">Linux AMD64</a>
+    </div>
+  </div>
+  <span class="sep"></span>
+  <input type="text" id="adminPhone" placeholder="手机号" maxlength="11" style="width:115px">
+  <input type="password" id="adminPass" placeholder="密码" style="width:80px">
+  <button onclick="doLogin()" class="btn btn-auth" title="同个账号同时只能一个登录，新的登录会踢掉旧的">登录/注册</button>
+  <button onclick="doLogout()" class="btn btn-out">登出</button>
+  <span class="sep"></span>
+  <input type="text" id="cardInput" placeholder="卡密" style="width:120px">
+  <button onclick="doRecharge()" class="btn btn-card">兑换</button>
+  <span class="sep"></span>
+      <div class="kefu-btn" onmouseenter="showAdminPopover(this, '.expire-pop')" onmouseleave="hideAdminPopover(this, '.expire-pop')">
+	      <button class="btn" id="btnExpire" style="background:#444;color:#888;font-size:11px">到期</button>
+	      <div id="expirePop" class="expire-pop admin-popover" style="display:none;position:absolute;right:0;top:100%;z-index:999;background:#1a1a2e;border:1px solid #444;border-radius:8px;padding:8px 12px;white-space:nowrap;font-size:11px;line-height:2;min-width:180px"></div>
+	    </div>
+  <span class="sep"></span>
+  <input type="number" id="portInput" value="8080" style="width:60px">
+  <button onclick="startServer()" class="btn btn-start">启动</button>
+  <button onclick="stopServer()" class="btn btn-stop">停止</button>
+  <span class="sep"></span>
+  <button onclick="toggleAutostart()" class="btn" id="btnAutostart" style="background:#444;color:#888" title="开机启动">开机启动</button>
+  <button onclick="toggleOpenWeb()" class="btn" id="btnOpenWeb" style="background:#444;color:#888" title="自动开页">自动开页</button>
+  <span class="st st-info" id="exeConnStatus" title="用于确认网页是否能连接本机 EXE">EXE检测中</span>
+  <span class="st" id="statusBar" style="font-size:10px">未认证</span>
+  <span style="flex:1"></span>
+  <div class="kefu-btn" onmouseenter="showAdminPopover(this, '.kefu-pop')" onmouseleave="hideAdminPopover(this, '.kefu-pop')">
+    <button class="btn" style="background:#e67e22;color:#fff">交流</button>
+    <div class="kefu-pop admin-popover" style="position:absolute;right:0;top:100%;z-index:999;background:#1a1a2e;border:1px solid #e67e22;border-radius:8px;padding:10px;gap:12px;white-space:nowrap;display:none">
+      <div style="text-align:center"><img src="assets/images/kefu/kefu.png" style="width:120px;height:120px;border-radius:4px"><div style="color:#38a141;font-size:10px;margin-top:2px">zheng</div></div>
+    </div>
+  </div>
+  <div class="kefu-btn" onmouseenter="showAdminPopover(this, '.help-pop')" onmouseleave="hideAdminPopover(this, '.help-pop')">
+	    <button class="btn" style="background:#3377EB;color:#fff">帮助</button>
+    <div class="help-pop admin-popover" style="display:none;position:absolute;right:0;top:100%;z-index:999;background:#1a1a2e;border:1px solid #3377EB;border-radius:8px;padding:12px;white-space:nowrap;font-size:11px;line-height:1.8;min-width:280px">
+      <b style="color:#e94560">新手指南</b><br>
+      <span style="color:#888">① 点顶部</span><span style="color:#4EC9B0">下载</span><span style="color:#888"> → 解压对应平台压缩包 → 运行客户端</span><br>
+      <span style="color:#888">② 输入手机号+密码 → 点</span><span style="color:#3377EB">登录/注册</span><br>
+      <span style="color:#888">③ 联系客服兑换卡密 → 点</span><span style="color:#f59614">兑换</span><br>
+      <span style="color:#888">④ 点</span><span style="color:#38a141">启动</span><span style="color:#888"> 开启数据服务(8080端口)</span><br>
+      <span style="color:#888">⑤ 点</span><span style="color:#38a141">开机启动</span><span style="color:#888"> 切换开机启动(需以管理员身份运行过一次)</span><br>
+      <span style="color:#888">⑥ 左侧选接口 → 填参数 → 点</span><span style="color:#e94560">发送</span><br>
+      <span style="color:#888">⑦ 实时推送: 点 ⚡/d201 → 在当前接口底部连接 → 发命令</span><br>
+      <span style="color:#888">⑧ 顶部</span><span style="color:#38a141">自动开页</span><span style="color:#888">可切换启动时是否自动打开网页；也可在 config.ini 的 [General] 设置 OpenWebOnLaunch=0</span><br>
+      <hr style="border-color:#0f3460;margin:6px 0">
+      <span style="color:#666;font-size:10px">产品到期时间在顶部显示，到期前3天变黄</span><br>
+      <span style="color:#666;font-size:10px">启动后可关闭网页，服务继续运行，API正常调用</span>
+    </div>
+  </div>
+  <button onclick="doExit()" class="btn btn-exit">退出</button>
+</div>
+<div class="app">
+<div class="sidebar">
+<div class="sidebar-header"><span class="sidebar-header-title">产品 / API 导航</span><button type="button" id="methodGalleryToggle" class="method-gallery-trigger" onclick="toggleMethodGallery()" title="展开全部方法总览">方法总览 <span>↗</span></button><button type="button" id="uiGalleryToggle" class="ui-gallery-trigger" onclick="toggleUiGallery()" aria-controls="uiGallery" aria-expanded="false" title="查看基于 data_interface 构建的应用">应用展示 <span>31</span></button></div>
+<div class="product-nav">
+  <div id="latencyBar" class="product-nav-latency"></div>
+  <div class="product-nav-caption product-nav-live product-nav-feature"><span class="product-nav-feature-icon">⚡</span><span>实时推送通道</span><span class="product-nav-feature-badge">WS</span></div>
+  <div id="pushD201" class="product-nav-button product-push" data-product="d201" onclick="selectD201()"><span class="product-nav-code">d201</span><span class="product-nav-badge">WS</span><a href="download.html#docs" target="_blank" class="product-nav-link" onclick="event.stopPropagation()">文档</a><a href="d201.html" target="_blank" class="product-nav-link accent" onclick="event.stopPropagation()">看板</a></div>
+  <div id="pushD101" class="product-nav-button product-push" data-product="d101" onclick="selectD101()"><span class="product-nav-code">d101</span><span class="product-nav-badge">WS</span><a href="download.html#docs" target="_blank" class="product-nav-link" onclick="event.stopPropagation()">文档</a></div>
+  <div id="pushD202" class="product-nav-button product-push" data-product="d202" onclick="selectD202()"><span class="product-nav-code">d202</span><span class="product-nav-badge">WS</span><a href="download.html#docs" target="_blank" class="product-nav-link" onclick="event.stopPropagation()">文档</a></div>
+  <div class="product-nav-caption">接口分类</div>
+  <div class="product-nav-category-grid">
+    <div id="marketAllButton" class="product-nav-button product-all product-active" onclick="selectLegacyWorkspace()"><span class="product-nav-icon">▦</span><span>全部 HTTP 接口</span><span class="product-nav-badge">总目录</span></div>
+    <div id="productD1" class="product-nav-button" data-product="d1" onclick="selectProductWorkspace('d1')"><span class="product-nav-code">d1</span><span class="product-nav-badge">HTTP</span></div>
+    <div id="productD2" class="product-nav-button" data-product="d2" onclick="selectProductWorkspace('d2')"><span class="product-nav-code">d2</span><span class="product-nav-badge">HTTP</span></div>
+    <div id="productD3" class="product-nav-button" data-product="d3" onclick="selectProductWorkspace('d3')"><span class="product-nav-code">d3</span><span class="product-nav-badge">HTTP</span></div>
+    <div id="productD4" class="product-nav-button" data-product="d4" onclick="selectProductWorkspace('d4')"><span class="product-nav-code">d4</span><span class="product-nav-badge">HTTP</span></div>
+    <div id="marketNavButton" class="product-nav-button product-d6" data-product="d6" onclick="selectMarketWorkspace()"><span class="product-nav-code">d6</span><span class="product-nav-badge">HTTP + WS</span><a href="download.html#docs" target="_blank" rel="noopener noreferrer" class="product-nav-link" onclick="event.stopPropagation()">文档</a></div>
+  </div>
+</div>
+<div class="search-box"><input type="text" id="searchInput" placeholder="搜索接口..." oninput="filterNav()"></div>
+<div class="nav" id="nav"></div>
+</div>
+<section id="methodGallery" class="method-gallery" aria-hidden="true">
+  <div class="method-gallery-head">
+    <div>
+      <div class="method-gallery-kicker">CAPABILITY MATRIX · LOCAL API CATALOG</div>
+      <h2>接口能力总览</h2>
+      <p>一屏查看全部方法，点击卡片即可进入参数与请求工作区。</p>
+    </div>
+    <div class="method-gallery-metrics" aria-label="方法统计">
+      <div class="method-gallery-metric"><strong id="methodGalleryTotal">0</strong><span>方法</span></div>
+      <div class="method-gallery-metric"><strong id="methodGalleryHttp">0</strong><span>HTTP</span></div>
+      <div class="method-gallery-metric"><strong id="methodGalleryWs">0</strong><span>实时</span></div>
+      <button type="button" class="method-gallery-close" onclick="toggleMethodGallery(false)">收起 ×</button>
+    </div>
+  </div>
+  <div class="method-gallery-toolbar">
+    <div class="method-gallery-filters">
+      <button type="button" class="method-gallery-filter active" data-gallery-filter="all" onclick="setMethodGalleryFilter('all', this)">全部</button>
+      <button type="button" class="method-gallery-filter" data-gallery-filter="d1" onclick="setMethodGalleryFilter('d1', this)">d1</button>
+      <button type="button" class="method-gallery-filter" data-gallery-filter="d2" onclick="setMethodGalleryFilter('d2', this)">d2</button>
+      <button type="button" class="method-gallery-filter" data-gallery-filter="d3" onclick="setMethodGalleryFilter('d3', this)">d3</button>
+      <button type="button" class="method-gallery-filter" data-gallery-filter="d4" onclick="setMethodGalleryFilter('d4', this)">d4</button>
+      <button type="button" class="method-gallery-filter" data-gallery-filter="d6" onclick="setMethodGalleryFilter('d6', this)">d6</button>
+      <button type="button" class="method-gallery-filter" data-gallery-filter="ws" onclick="setMethodGalleryFilter('ws', this)">实时通道</button>
+    </div>
+    <label class="method-gallery-search"><span>⌕</span><input type="search" id="methodGallerySearch" placeholder="搜索方法、路径或分类" oninput="renderMethodGallery()"></label>
+    <span id="methodGalleryCount" class="method-gallery-count">等待目录加载</span>
+  </div>
+  <div id="methodGalleryGrid" class="method-gallery-grid"></div>
+</section>
+<section id="uiGallery" class="ui-gallery" aria-hidden="true">
+  <div class="ui-gallery-head">
+    <div>
+      <div class="ui-gallery-kicker">DATA_INTERFACE FOUNDATION · APPLICATIONS BUILT ON TOP</div>
+      <h2>底层可生万物 · 应用形态展示</h2>
+      <p class="ui-gallery-foundation-note"><strong>达塔接口是底层能力层，不是某一套固定 GUI。</strong> 下面所有画面均为基于 <code>data_interface</code> 构建的示例应用，用来展示同一套底层如何生长出工作台、图表看板、实时大屏和业务工具。</p>
+      <div class="ui-gallery-proof"><span>底层：达塔接口</span><span>上层：示例应用</span><span>31 个应用画面</span><span>中文名称已掩码</span></div>
+    </div>
+    <div class="ui-gallery-head-actions" aria-label="应用展示统计">
+      <div class="ui-gallery-metric"><strong>7</strong><span>示例应用</span></div>
+      <div class="ui-gallery-metric"><strong>31</strong><span>应用画面</span></div>
+      <button type="button" class="ui-gallery-close" onclick="toggleUiGallery(false)">收起 ×</button>
+    </div>
+  </div>
+  <div class="ui-gallery-toolbar">
+    <div class="ui-gallery-filters" aria-label="按产品筛选">
+      <button type="button" class="ui-gallery-filter active" data-ui-filter="all">全部</button>
+      <button type="button" class="ui-gallery-filter" data-ui-filter="d1">d1</button>
+      <button type="button" class="ui-gallery-filter" data-ui-filter="d2">d2</button>
+      <button type="button" class="ui-gallery-filter" data-ui-filter="d4">d4</button>
+      <button type="button" class="ui-gallery-filter" data-ui-filter="d6">d6</button>
+      <button type="button" class="ui-gallery-filter" data-ui-filter="d101">d101</button>
+      <button type="button" class="ui-gallery-filter" data-ui-filter="d201">d201</button>
+      <button type="button" class="ui-gallery-filter" data-ui-filter="d202">d202</button>
+    </div>
+    <label class="ui-gallery-search"><span>⌕</span><input type="search" id="uiGallerySearch" aria-label="搜索产品、Tab 或能力" placeholder="搜索产品、Tab 或能力"></label>
+    <span id="uiGalleryCount" class="ui-gallery-count">显示 31 / 31 张</span>
+  </div>
+  <div id="uiGalleryGrid" class="ui-gallery-grid"></div>
+</section>
+<div class="main">
+<div class="api-bar market-api-bar">
+<span class="api-name" id="apiName">选择左侧接口</span>
+<span class="api-path" id="apiPath"></span>
+<div class="stats">
+<div class="stat">请求<b id="stTotal">0</b></div>
+<div class="stat">成功<b id="stOk">0</b></div>
+<div class="stat">失败<b id="stFail">0</b></div>
+<div class="stat">均<b id="stAvg">0</b>ms</div>
+<div class="stat">本次<b id="stLast">0</b>ms</div>
+</div>
+</div>
+<div class="market-layout">
+<section id="legacyEditor" class="market-editor"><div class="market-empty"><strong>选择接口开始测试</strong><span>从左侧选择 d1～d4 或实时通道。</span></div></section>
+<section id="legacyResponse" class="market-response"><div class="market-empty"><strong>响应结果</strong><span>发送请求或连接 WebSocket 后，结果会显示在这里。</span></div></section>
+</div>
+<div id="marketView" class="market-view" style="display:none">
+<div class="api-bar market-api-bar">
+  <span class="api-name" id="marketApiName">d6</span>
+  <span class="api-path" id="marketApiPath">选择左侧行情接口</span>
+  <span id="marketPermissionStatus" class="market-status">状态检测中</span>
+  <div class="stats">
+    <div class="stat">HTTP<b id="marketEndpointCount">0</b></div>
+    <div class="stat">WS<b>1</b></div>
+  </div>
+</div>
+<div class="work market-layout">
+  <section id="marketEditor" class="market-editor"><div class="market-empty"><strong>选择行情接口开始测试</strong><span>兑换前也可查看完整接口、描述和入参；发送请求时按授权状态返回结果。</span></div></section>
+  <section id="marketResponse" class="market-response"><div class="market-empty"><strong>行情响应</strong><span>发送请求或连接 WebSocket 后，结果会显示在这里。</span></div></section>
+</div>
+</div>
+</div>
+</div>
+<script>
+// ══════════════════════════════════════════════
+// 统一管理 + API测试脚本
+// ══════════════════════════════════════════════
+
+var WEB_VERSION = 85;  // 网页版本号，每次更新递增
+var UPDATE_TIME = '2026-09-13 19:34';
+var UPDATE_ITEMS = [
+  '✅【D202 沪市千档更新】修复沪市千档行情获取与解析问题，更新后可正常使用 D202 沪市千档数据；其他功能保持不变。',
+  '⚡【高并发吞吐重构】D202 早盘竞价千万级快照并发引擎重磅升级：全市场 5000+ 标的千万级千档竞价快照极速稳定获取，底层高并发连接池调度与智能容错重试深度加固，落盘完整率 100%，毫秒级无损存储！',
+  '🔌【D202 线路优化】优化动态线路选优与故障切换机制，同时探测多组 IP 与端口，自动选择首个有效线路；连接异常时统一切换，提升行情连接的连续性与恢复速度！',
+  '🪟【Windows 11 稳定性优化】针对 Windows 11 下的启动、网络连接与长时间运行场景进行稳定性加固，减少异常退出和连接中断！',
+  '🍏【macOS 稳定性优化】优化 macOS ARM64 与 Intel 客户端的连接、资源回收和长时间运行表现，提升不同 Mac 设备上的使用稳定性！',
+  '📈【全品种能力跃升】D4 多品种行情与 K 线重磅升级：全市场全品种强势覆盖！全面支持股票、基金、指数等多品种的秒级/分时/日周月全周期 K 线与历史分时成交，满足多维度策略回测与盘中深度分析！',
+  '🛠️【深度性能调优】D2 行情分析模块性能调优与功能升级：资金流向与特色指标引擎全面重构，响应延迟进一步降低，吞吐更平稳！',
+  '🚀【黄金量化范式】D101 全推 + L2 按需订阅体系：D101 原生提供 203 个全字段全市场毫秒级极速全推（粗筛王者），结合 D201 / D202 高精度 L2 深度盘口逐笔按需下钻订阅，兼顾全市场广度与毫秒级深度！',
+  '🍎【跨平台生态完整拼图】macOS Intel (x86_64) 原生客户端重磅上线：下载中心正式上架 Intel 架构 Mac 原生 DMG，全平台生态（Win / Mac 双架构 / Linux 桌面与 Headless）完整覆盖，即刻前往下载中心更新！'
+];
+var UPDATE_NOTE = UPDATE_ITEMS.join('；') + '。';
+var adminPort = parseInt(location.port) || 9527;
+function api(p) { return 'http://127.0.0.1:' + adminPort + p; }
+
+function renderAnnouncement() {
+  var version = document.getElementById('announcementVersion');
+  var time = document.getElementById('announcementTime');
+  var list = document.getElementById('announcementText');
+  if (version) version.textContent = 'v' + WEB_VERSION;
+  if (time) time.textContent = UPDATE_TIME;
+  if (!list) return;
+  list.textContent = '';
+  UPDATE_ITEMS.forEach(function(item) {
+    var li = document.createElement('li');
+    li.textContent = item;
+    list.appendChild(li);
+  });
+}
+renderAnnouncement();
+
+function closeAnnouncementOnBackdrop(event) {
+  var target = event.target;
+  if (target && target.closest && target.closest('button, a, input, textarea, select')) return;
+  closeAnnouncement();
+}
+
+function closeAnnouncement() {
+  var overlay = document.getElementById('announcementOverlay');
+  if (!overlay) return;
+  overlay.classList.add('is-hidden');
+  overlay.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('announcement-open');
+}
+document.body.classList.add('announcement-open');
+document.addEventListener('keydown', function(event) {
+  if (event.key === 'Escape') closeAnnouncement();
+});
+
+// 安装包统一由官网发布，按钮直接打开官网首页；不再深链具体安装包。
+// 可用 ?platform=windows|macos|macos-intel|linux 手动切换，便于客户在其他设备上下载。
+var CLIENT_DOWNLOADS = {
+  windows: {href: 'downloads/programs/data_interface_win_amd64.zip', name: 'Windows AMD64'},
+  macos: {href: 'downloads/programs/data_interface_macos_arm64.dmg', name: 'macOS ARM64 (Apple Silicon)'},
+  'macos-intel': {href: 'downloads/programs/data_interface_macos_x86_64.dmg', name: 'macOS Intel (x86_64)'},
+  linux: {href: 'downloads/programs/data_interface_linux_amd64.tar.gz', name: 'Linux AMD64'}
+};
+function detectClientPlatform() {
+  var forced = new URLSearchParams(location.search).get('platform');
+  if (forced && CLIENT_DOWNLOADS[forced.toLowerCase()]) return forced.toLowerCase();
+  var ua = ((navigator.userAgentData && navigator.userAgentData.platform) ||
+    navigator.platform || '' ) + ' ' + (navigator.userAgent || '');
+  if (/windows/i.test(ua)) return 'windows';
+  if (/macintosh|mac os x/i.test(ua)) {
+    if (/intel/i.test(ua)) return 'macos-intel';
+    return 'macos';
+  }
+  if (/linux/i.test(ua) && !/android/i.test(ua)) return 'linux';
+  return 'windows';
+}
+function configureClientDownloadLinks() {
+  var platform = detectClientPlatform();
+  var item = CLIENT_DOWNLOADS[platform];
+  document.querySelectorAll('[data-client-download]').forEach(function(link) {
+    link.href = item.href;
+    link.download = item.href.split('/').pop();
+    link.title = '下载 ' + item.name + ' 客户端';
+  });
+  document.querySelectorAll('[data-platform-download]').forEach(function(link) {
+    var selected = link.getAttribute('data-platform-download');
+    var selectedItem = CLIENT_DOWNLOADS[selected];
+    if (!selectedItem) return;
+    link.href = selectedItem.href;
+    link.download = selectedItem.href.split('/').pop();
+    link.title = '下载 ' + selectedItem.name + ' 客户端';
+  });
+  var button = document.getElementById('clientDownloadButton');
+  if (button) button.title = '选择客户端平台；当前浏览器推荐 ' + item.name;
+}
+configureClientDownloadLinks();
+
+function positionAdminPopover(host, popover) {
+  if (!host || !popover) return;
+  var anchor = host.querySelector('button') || host;
+  var anchorRect = anchor.getBoundingClientRect();
+  var margin = 8;
+  var viewportWidth = document.documentElement.clientWidth || window.innerWidth;
+  var viewportHeight = document.documentElement.clientHeight || window.innerHeight;
+  var width = popover.offsetWidth;
+  var height = popover.offsetHeight;
+  var maxLeft = Math.max(margin, viewportWidth - width - margin);
+  var left = Math.min(Math.max(margin, anchorRect.right - width), maxLeft);
+  var top = anchorRect.bottom + 4;
+  var maxTop = Math.max(margin, viewportHeight - height - margin);
+  if (top > maxTop && anchorRect.top - height - 4 >= margin) {
+    top = anchorRect.top - height - 4;
+  }
+  top = Math.min(Math.max(margin, top), maxTop);
+  popover.style.setProperty('--admin-popover-left', left + 'px');
+  popover.style.setProperty('--admin-popover-top', top + 'px');
+}
+
+function closeOtherAdminPopovers(current) {
+  document.querySelectorAll('.admin-popover.admin-popover-open').forEach(function(popover) {
+    if (popover === current) return;
+    popover.classList.remove('admin-popover-open');
+    popover.style.display = 'none';
+  });
+  var menu = document.getElementById('clientDownloadMenu');
+  var downloadPopover = menu && menu.querySelector('.download-pop');
+  if (menu && downloadPopover !== current) {
+    menu.classList.remove('open');
+    var downloadButton = document.getElementById('clientDownloadButton');
+    if (downloadButton) downloadButton.setAttribute('aria-expanded', 'false');
+  }
+}
+
+function showAdminPopover(host, selector) {
+  var popover = host && host.querySelector(selector);
+  if (!popover) return;
+  closeOtherAdminPopovers(popover);
+  popover.style.display = popover.classList.contains('kefu-pop') ? 'flex' : 'block';
+  popover.classList.add('admin-popover-open');
+  positionAdminPopover(host, popover);
+}
+
+function hideAdminPopover(host, selector) {
+  var popover = host && host.querySelector(selector);
+  if (!popover) return;
+  popover.classList.remove('admin-popover-open');
+  popover.style.display = 'none';
+}
+
+function repositionAdminPopovers() {
+  document.querySelectorAll('.admin-popover.admin-popover-open').forEach(function(popover) {
+    var host = popover.parentElement;
+    if (host) positionAdminPopover(host, popover);
+  });
+}
+
+function toggleClientDownloadMenu(event) {
+  if (event) event.stopPropagation();
+  var menu = document.getElementById('clientDownloadMenu');
+  var button = document.getElementById('clientDownloadButton');
+  if (!menu) return;
+  var opened = menu.classList.toggle('open');
+  if (button) button.setAttribute('aria-expanded', opened ? 'true' : 'false');
+  var popover = menu.querySelector('.download-pop');
+  if (popover) {
+    if (opened) closeOtherAdminPopovers(popover);
+    popover.classList.toggle('admin-popover-open', opened);
+    popover.style.display = opened ? 'block' : 'none';
+    if (opened) positionAdminPopover(menu, popover);
+  }
+}
+document.addEventListener('click', function(event) {
+  var menu = document.getElementById('clientDownloadMenu');
+  var button = document.getElementById('clientDownloadButton');
+  if (menu && !menu.contains(event.target)) {
+    menu.classList.remove('open');
+    var popover = menu.querySelector('.download-pop');
+    if (popover) popover.classList.remove('admin-popover-open');
+    if (button) button.setAttribute('aria-expanded', 'false');
+  }
+});
+document.addEventListener('keydown', function(event) {
+  if (event.key !== 'Escape') return;
+  var menu = document.getElementById('clientDownloadMenu');
+  var button = document.getElementById('clientDownloadButton');
+  if (menu) {
+    menu.classList.remove('open');
+    var popover = menu.querySelector('.download-pop');
+    if (popover) popover.classList.remove('admin-popover-open');
+  }
+  if (button) button.setAttribute('aria-expanded', 'false');
+});
+window.addEventListener('resize', repositionAdminPopovers);
+var adminBarForPopover = document.getElementById('adminBar');
+if (adminBarForPopover) adminBarForPopover.addEventListener('scroll', repositionAdminPopovers, {passive: true});
+
+// ── file:// 检测 ──
+if (location.protocol === 'file:') {
+  document.getElementById('warnBar').className = 'warn-bar show';
+  var _ft = setInterval(function() {
+    fetch('http://localhost:9527/api/status')
+      .then(function(r) { return r.json() })
+      .then(function() { location.href = 'http://localhost:9527'; clearInterval(_ft); })
+      .catch(function() {});
+  }, 2000);
+}
+
+// ── 管理功能 ──
+var _lastStatus = {};
+function doLogin() {
+  var ph = document.getElementById('adminPhone').value.trim();
+  var pw = document.getElementById('adminPass').value.trim();
+  if (!ph) { alert('请输入手机号'); return; }
+  if (!pw) { alert('请输入密码'); return; }
+  var f = new URLSearchParams(); f.append('phone', ph); f.append('password', pw);
+  fetch(api('/api/login'), {method: 'POST', body: f})
+    .then(function(r) { return r.json() })
+    .then(function(res) {
+      if (res.ok) {
+        if (res.needRecharge) alert('登录成功，当前无有效产品，请兑换');
+        else alert('登录成功');
+      } else {
+        alert((res.message || '登录失败') + (res.needRecharge ? '，请兑换' : ''));
+      }
+      refreshAdmin();
+    });
+}
+function doLogout() {
+  if (!_lastStatus.isLoggedIn) { alert('您还没有登录'); return; }
+  fetch(api('/api/logout'), {method: 'POST'})
+    .then(function(r) { return r.json() })
+    .then(function() {
+      document.getElementById('adminPhone').value = '';
+      document.getElementById('adminPhone').readOnly = false;
+      document.getElementById('adminPass').value = '';
+      refreshAdmin();
+    });
+}
+function doRecharge() {
+  if (!_lastStatus.isLoggedIn) { alert('请先登录后再兑换'); return; }
+  var ck = document.getElementById('cardInput').value.trim();
+  if (!ck) { alert('请输入卡密'); return; }
+  var f = new URLSearchParams(); f.append('cardKey', ck);
+  fetch(api('/api/recharge'), {method: 'POST', body: f})
+    .then(function(r) { return r.json() })
+    .then(function(res) {
+      alert(res.message);
+      document.getElementById('cardInput').value = '';
+      refreshAdmin();
+    });
+}
+function startServer() {
+  if (!_lastStatus.isLoggedIn) { alert('请先登录后再启动数据服务'); return; }
+  if (!_lastStatus.isVerified) { alert('您的账户还未兑换，请先兑换后再启动'); return; }
+  var p = document.getElementById('portInput').value;
+  var f = new URLSearchParams(); f.append('port', p);
+  fetch(api('/api/server/start'), {method: 'POST', body: f})
+    .then(function(r) {
+      return r.json().catch(function() {
+        return { ok: false, message: '请求失败 (HTTP ' + r.status + ')' };
+      });
+    })
+    .then(function(res) {
+      if (res && res.ok === false) {
+        alert(res.message || '启动数据服务失败');
+      }
+      refreshAdmin();
+    })
+    .catch(function() {
+      alert('启动请求失败，请检查网络或客户端状态');
+      refreshAdmin();
+    });
+}
+function stopServer() {
+  if (!_lastStatus.running) { alert('数据服务当前未在运行'); return; }
+  fetch(api('/api/server/stop'), {method: 'POST'})
+    .then(function() { refreshAdmin(); });
+}
+function toggleAutostart() {
+  var btn = document.getElementById('btnAutostart');
+  var on = btn.textContent === '开机启动 ✓';
+  fetch(api('/api/autostart/' + (on ? 'off' : 'on')), {method: 'POST'})
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d && d.error) { alert('操作失败：' + d.error); return; }
+      refreshAdmin();
+    })
+    .catch(function() { refreshAdmin(); });
+}
+function toggleOpenWeb() {
+  var enabled = _lastStatus.openWebOnLaunch !== false;
+  fetch(api('/api/open-web/' + (enabled ? 'off' : 'on')), {method: 'POST'})
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d && d.error) { alert('操作失败：' + d.error); return; }
+      refreshAdmin();
+    })
+    .catch(function() { refreshAdmin(); });
+}
+function doExit() {
+  if (!confirm('确定退出程序？')) return;
+  fetch(api('/api/exit'), {method: 'POST'})
+    .then(function() { document.body.innerHTML = '<div style="text-align:center;padding:100px;color:#e0e0e0;font-size:18px">程序已退出</div>'; });
+}
+var _adminFail = 0;
+function refreshAdmin() {
+  fetch(api('/api/status'))
+    .then(function(r) { return r.json() })
+    .then(function(s) {
+      _adminFail = 0;
+      _lastStatus = s;
+      var conn = document.getElementById('exeConnStatus');
+      conn.textContent = s.exeConnected === false ? 'EXE异常' : 'EXE已连接';
+      conn.className = 'st ' + (s.exeConnected === false ? 'st-stop' : 'st-run');
+      var ab = document.getElementById('btnAutostart');
+      if (s.autostart) {
+        ab.textContent = '开机启动 ✓';
+        ab.style.background = '#38a141'; ab.style.color = '#fff';
+      } else {
+        ab.textContent = '开机启动';
+        ab.style.background = '#444'; ab.style.color = '#888';
+      }
+      var wb = document.getElementById('btnOpenWeb');
+      if (s.openWebOnLaunch !== false) {
+        wb.textContent = '自动开页 ✓';
+        wb.style.background = '#38a141'; wb.style.color = '#fff';
+      } else {
+        wb.textContent = '自动开页';
+        wb.style.background = '#444'; wb.style.color = '#888';
+      }
+      var exeVer = s.version || 0;
+      if (WEB_VERSION > exeVer) {
+        document.getElementById('webVer').textContent = WEB_VERSION;
+        document.getElementById('exeVer').textContent = exeVer;
+        document.getElementById('updateNote').textContent = UPDATE_NOTE;
+        document.getElementById('verBar').className = 'ver-bar show';
+      } else {
+        document.getElementById('verBar').className = 'ver-bar';
+      }
+      var sb = document.getElementById('statusBar');
+      if (s.isVerified) {
+        sb.textContent = s.running ? '数据服务运行中' : '数据服务已关闭';
+        sb.className = 'st ' + (s.running ? 'st-run' : 'st-stop');
+      } else {
+        sb.textContent = s.isLoggedIn ? '需兑换' : '未认证';
+        sb.className = 'st ' + (s.isLoggedIn ? 'st-warn' : 'st-stop');
+      }
+	      var ep = document.getElementById('expirePop');
+	      var eb = document.getElementById('btnExpire');
+	      var pmap = s.products || {};
+      var plabels = {'d1':'d1','d2':'d2','d3':'d3','d4':'d4','d101':'d101','d201':'d201','d202':'d202','d6':'d6'};
+	      var ph = '', worstCls = 'st-run', worstColor = '#38a141';
+	      for (var pt in plabels) {
+	        var ea = pmap[pt] || 0;
+	        if (ea > 0) {
+	          var d = new Date(ea);
+	          var ts = d.getFullYear() + '/' + ('0'+(d.getMonth()+1)).slice(-2) + '/' + ('0'+d.getDate()).slice(-2);
+	          var cls, clr;
+	          if (d.getTime() < Date.now()) { cls = 'st-stop'; clr = '#c0392b'; }
+	          else if (d.getTime() - Date.now() < 3*24*3600000) { cls = 'st-warn'; clr = '#e67e22'; }
+	          else { cls = 'st-run'; clr = '#27ae60'; }
+	          ph += '<div><span class="st ' + cls + '">' + plabels[pt] + ':' + ts + '</span></div>';
+	          if (cls === 'st-stop' || (cls === 'st-warn' && worstCls === 'st-run')) { worstCls = cls; worstColor = clr; }
+	        } else {
+	          ph += '<div><span class="st st-stop">' + plabels[pt] + ':--</span></div>';
+	          if (worstCls === 'st-run') { worstCls = 'st-stop'; worstColor = '#c0392b'; }
+	        }
+	      }
+	      ep.innerHTML = ph;
+	      if (s.isLoggedIn) {
+	        eb.style.background = worstColor; eb.style.color = '#fff';
+	      } else {
+	        eb.style.background = '#444'; eb.style.color = '#888';
+	      }
+      // 各实时通道单向延迟 (RTT/2)
+      var lb = document.getElementById('latencyBar');
+      var lines = [];
+      ['d101','d201','d202'].forEach(function(k) {
+        var c = s[k];
+        if (c && c.latency > 0) {
+          var ow = Math.round(c.latency / 2);
+          lines.push('⚡' + k.toUpperCase() + ' ' + ow + 'ms');
+        }
+      });
+      lb.innerHTML = lines.length ? lines.join(' &nbsp;') : '';
+      if (s.isLoggedIn) {
+        var phEl = document.getElementById('adminPhone');
+        if (s.phone) phEl.value = s.phone;
+        phEl.readOnly = true;
+        document.getElementById('adminPass').value = '';
+      }
+      if (window.marketUpdateStatus) window.marketUpdateStatus();
+    })
+    .catch(function() {
+      _adminFail++;
+      if (_adminFail >= 3) {
+        var conn = document.getElementById('exeConnStatus');
+        conn.textContent = 'EXE未连接';
+        conn.className = 'st st-stop';
+        var sb = document.getElementById('statusBar');
+        sb.textContent = '已断开';
+        sb.className = 'st st-stop';
+      }
+    });
+}
+
+// ── API测试功能 ──
+var API_DATA = null, currentApi = null, stats = {total: 0, ok: 0, fail: 0, time: 0};
+var currentRawBody = null;
+var methodCatalog = {realtime: [], legacy: [], market: [], items: []};
+var methodGalleryItems = [], methodGalleryFilter = 'all';
+var GALLERY_HIDDEN_API_GROUPS = {
+  '功能说明': true,
+  '推送': true,
+  '数据批量统计': true,
+  '数据统计': true,
+  '日志': true,
+  '用户信息': true,
+  '用户消息': true,
+  '用户自选股': true,
+  '管理': true,
+  '系统': true,
+  '系统版本': true,
+  '排行配置': true,
+  '功能搜索': true,
+  '论坛专栏消息': true,
+  '论坛精选消息': true
+};
+
+// 接口名称、本地路径和协议字段均保持底层 HTTP 契约。
+function publicText(value) {
+  return String(value == null ? '' : value);
+}
+
+function publicPath(value) {
+  return publicText(value).replace(/(^|\/)cjfp(?=\/|$)/gi, '$1history');
+}
+
+// 将多视图接口展开为独立的工作台条目。目录仍保留一个稳定的 HTTP
+// 路径，但每个子视图使用自己的默认参数和日期能力，避免把不存在的
+// TRADE_DATE 自动带给快照类报告。
+function expandLegacyCatalogVariants(catalog) {
+  if (!catalog || !Array.isArray(catalog.groups)) return;
+  catalog.groups.forEach(function(group) {
+    if (!Array.isArray(group.apis)) return;
+    var expanded = [];
+    group.apis.forEach(function(api) {
+      if (api.host_var !== 'market_indicator' || !Array.isArray(api.ui_variants) || !api.ui_variants.length) {
+        expanded.push(api);
+        return;
+      }
+      api.ui_variants.forEach(function(variant) {
+        var item = Object.assign({}, api);
+        item.name_cn = variant.name_cn || api.name_cn;
+        item.name_en = variant.name_en || api.name_en;
+        item.description = variant.description || api.description;
+        item.params = (api.params || []).map(function(param) {
+          var copy = Object.assign({}, param);
+          var key = String(copy.key || '').toLowerCase();
+          if (key === 'type') {
+            copy.value = variant.type;
+            copy.desc = '固定子视图：' + variant.type;
+          } else if (key === 'date') {
+            if (variant.dateSupported === false) return null;
+            copy.value = '';
+            copy.autoToday = false;
+          }
+          return copy;
+        }).filter(function(param) { return param !== null; });
+        item.sample_body = 'sub=nxfxb&type=' + encodeURIComponent(variant.type) + '&pageNumber=1&pageSize=50';
+        delete item.ui_variants;
+        expanded.push(item);
+      });
+    });
+    group.apis = expanded;
+  });
+}
+
+function buildMethodGalleryItems() {
+  var realtimeItems = [
+    {kind: 'ws', product: 'd201', badge: 'LIVE', name: 'd201 实时推送', path: 'WS /d201', desc: '盘口、委托和成交实时数据，支持多种订阅方法。', category: '实时通道', action: 'selectD201'},
+    {kind: 'ws', product: 'd101', badge: 'LIVE', name: 'd101 实时推送', path: 'WS /d101', desc: '实时行情和盘口异动订阅通道，支持按市场或品种全推。', category: '实时通道', action: 'selectD101'},
+    {kind: 'ws', product: 'd202', badge: 'LIVE', name: 'd202 实时推送（备用）', path: 'WS /d202', desc: '快照、委托、成交、大单和队列实时数据。', category: '实时通道', action: 'selectD202'}
+  ];
+  var legacyItems = [];
+  if (API_DATA && Array.isArray(API_DATA.groups)) {
+    API_DATA.groups.forEach(function(g, gi) {
+      if (GALLERY_HIDDEN_API_GROUPS[g.name_cn] || !Array.isArray(g.apis)) return;
+      var route = publicText(g.route_prefix || '/d1');
+      var product = route.replace(/^\/+/, '').split('/')[0] || 'd1';
+       g.apis.forEach(function(api, ai) {
+         var method = String(api.method || g.method || 'POST').toUpperCase();
+        var name = publicText(api.name_cn || api.host_var || '接口');
+        var hostVar = String(api.host_var || '').replace(/^\/+/, '');
+        var path = publicPath(route + '/' + hostVar);
+        var category = publicText(g.name_cn || '接口分类');
+        var desc = publicText(api.description || api.desc || category || '参数化业务接口');
+        legacyItems.push({
+          kind: 'http', product: product, badge: method, name: name, path: path,
+          desc: desc, category: category, method: method, gi: gi, ai: ai,
+          search: [product, method, name, path, category, desc].join(' ').toLowerCase()
+        });
+      });
+    });
+  }
+  var marketItems = methodCatalog.market.length ? methodCatalog.market : [methodCatalogD6WorkspaceItem()];
+  var items = realtimeItems.concat(legacyItems, marketItems);
+  methodCatalog.realtime = realtimeItems;
+  methodCatalog.legacy = legacyItems;
+  methodCatalog.market = marketItems;
+  methodCatalog.items = items;
+  items.forEach(function(item) {
+    if (!item.search) item.search = [item.product, item.badge, item.name, item.path, item.category, item.desc].join(' ').toLowerCase();
+  });
+  methodGalleryItems = items;
+  var httpCount = items.filter(function(item) { return item.kind === 'http' || (item.kind === 'market' && !item.marketWs); }).length;
+  var wsCount = items.filter(function(item) { return item.kind === 'ws' || item.marketWs; }).length;
+  var totalEl = document.getElementById('methodGalleryTotal');
+  var httpEl = document.getElementById('methodGalleryHttp');
+  var wsEl = document.getElementById('methodGalleryWs');
+  if (totalEl) totalEl.textContent = items.length;
+  if (httpEl) httpEl.textContent = httpCount;
+  if (wsEl) wsEl.textContent = wsCount;
+}
+
+function methodCatalogD6WorkspaceItem() {
+  return {kind: 'market', product: 'd6', badge: 'HTTP + WS', name: '行情工作区', path: '/d6/market/catalog', desc: '行情接口与实时 WebSocket 工作区。', category: '行情工作区', action: 'selectMarketWorkspace'};
+}
+
+function updateMethodGalleryMarketItems(endpoints) {
+  var marketItems = [];
+  if (Array.isArray(endpoints)) {
+    marketItems = endpoints.map(function(endpoint, index) {
+      var method = String(endpoint.method || 'GET').toUpperCase();
+      var path = publicPath(endpoint.path || '');
+      var name = publicText(endpoint.name || path || '行情接口');
+      var category = publicText(endpoint.category || '行情接口');
+      var desc = publicText(endpoint.description || category);
+      return {
+        kind: 'market', product: 'd6', badge: method, name: name, path: path,
+        desc: desc, category: category, method: method, marketIndex: index,
+        search: ['d6', method, name, path, category, desc].join(' ').toLowerCase()
+      };
+    });
+    marketItems.push({
+      kind: 'market', product: 'd6', badge: 'WS', name: '实时行情 WebSocket', path: 'WS /d6/market/ws/quote',
+      desc: '实时指数、个股和盘口行情推送。', category: '行情工作区', marketWs: true,
+      search: 'd6 ws 实时行情 websocket /d6/market/ws/quote 行情工作区 实时指数 个股 盘口'
+    });
+  }
+  methodCatalog.market = marketItems.length ? marketItems : [methodCatalogD6WorkspaceItem()];
+  buildMethodGalleryItems();
+  var panel = document.getElementById('methodGallery');
+  if (panel && panel.classList.contains('open')) renderMethodGallery();
+}
+
+function setMethodGalleryFilter(filter, el) {
+  methodGalleryFilter = filter || 'all';
+  document.querySelectorAll('.method-gallery-filter').forEach(function(button) { button.classList.remove('active'); });
+  if (el) el.classList.add('active');
+  renderMethodGallery();
+}
+
+function renderMethodGallery() {
+  if (!methodGalleryItems.length && API_DATA) buildMethodGalleryItems();
+  var grid = document.getElementById('methodGalleryGrid');
+  if (!grid) return;
+  var searchEl = document.getElementById('methodGallerySearch');
+  var query = searchEl ? String(searchEl.value || '').trim().toLowerCase() : '';
+  var filtered = methodGalleryItems.filter(function(item) {
+    var byProduct = methodGalleryFilter === 'all' ||
+      (methodGalleryFilter === 'ws' ? (item.kind === 'ws' || item.marketWs) : item.product === methodGalleryFilter);
+    return byProduct && (!query || item.search.indexOf(query) >= 0);
+  });
+  var countEl = document.getElementById('methodGalleryCount');
+  if (countEl) countEl.textContent = '显示 ' + filtered.length + ' / ' + methodGalleryItems.length + ' 项';
+  if (!filtered.length) {
+    grid.innerHTML = '<div class="method-gallery-empty">没有匹配的方法，换个关键词试试。</div>';
+    return;
+  }
+  grid.innerHTML = filtered.map(function(item) {
+    var index = methodGalleryItems.indexOf(item);
+    var kindClass = item.kind === 'ws' ? 'method-card-ws' : item.kind === 'market' ? 'method-card-market' : 'method-card-http';
+    return '<button type="button" class="method-card ' + kindClass + '" data-gallery-index="' + index + '">' +
+      '<div class="method-card-top"><span class="method-card-product">' + escHtml(String(item.product).toUpperCase()) + '</span><span class="method-card-kind">' + escHtml(item.badge) + '</span></div>' +
+      '<div class="method-card-title">' + escHtml(item.name) + '</div>' +
+      '<div class="method-card-desc">' + escHtml(item.desc) + '</div>' +
+      '<div class="method-card-path">' + escHtml(item.path) + '</div>' +
+      '<div class="method-card-footer"><span>' + escHtml(item.category) + '</span><span class="method-card-arrow">打开方法 <b>↗</b></span></div>' +
+      '</button>';
+  }).join('');
+  grid.querySelectorAll('.method-card').forEach(function(card) {
+    card.onclick = function() { openMethodGalleryItem(parseInt(card.dataset.galleryIndex, 10)); };
+  });
+}
+
+function toggleMethodGallery(force) {
+  var panel = document.getElementById('methodGallery');
+  var trigger = document.getElementById('methodGalleryToggle');
+  if (!panel) return;
+  var open = force === undefined ? !panel.classList.contains('open') : !!force;
+  if (open) {
+    if (!methodGalleryItems.length) buildMethodGalleryItems();
+    renderMethodGallery();
+    panel.classList.add('open');
+    panel.setAttribute('aria-hidden', 'false');
+    if (trigger) { trigger.classList.add('active'); trigger.setAttribute('aria-expanded', 'true'); }
+  } else {
+    panel.classList.remove('open');
+    panel.setAttribute('aria-hidden', 'true');
+    if (trigger) { trigger.classList.remove('active'); trigger.setAttribute('aria-expanded', 'false'); }
+  }
+}
+
+function openMethodGalleryItem(index) {
+  var item = methodGalleryItems[index];
+  if (!item) return;
+  toggleMethodGallery(false);
+  if (item.kind === 'http') {
+    var selector = '#nav .api-item[data-gi="' + item.gi + '"][data-ai="' + item.ai + '"]';
+    var navItem = document.querySelector(selector);
+    if (!navItem && API_DATA) {
+      renderNav();
+      navItem = document.querySelector(selector);
+    }
+    if (navItem) selectApi(item.gi, item.ai, navItem);
+  } else if (item.kind === 'market' && typeof window.selectMarketWorkspace === 'function') {
+    window.selectMarketWorkspace();
+    if (item.marketWs && typeof window.marketRenderWs === 'function') window.marketRenderWs();
+    else if (item.marketIndex != null && typeof window.marketSelectEndpoint === 'function') window.marketSelectEndpoint(item.marketIndex);
+  } else if (item.action && typeof window[item.action] === 'function') {
+    window[item.action]();
+  }
+}
+
+// 所有方法都从管理端返回的统一目录进入页面；8080 只负责执行请求和 WebSocket。
+function loadUnifiedCatalog() {
+  return fetch('api/catalog?_' + Date.now(), {cache: 'no-store'})
+    .then(function(r) {
+      if (!r.ok) throw new Error('统一目录 HTTP ' + r.status);
+      return r.json();
+    })
+    .then(function(data) {
+      if (!data || !data.legacy) throw new Error('统一目录格式无效');
+      return data;
+    });
+}
+
+function init() {
+  loadUnifiedCatalog()
+    .then(function(data) {
+      API_DATA = data.legacy || data;
+      expandLegacyCatalogVariants(API_DATA);
+      buildMethodGalleryItems();
+      if (data.market) {
+        if (typeof window.marketSetCatalog === 'function') window.marketSetCatalog(data.market);
+        else {
+          window.__unifiedMarketCatalog = data.market;
+          updateMethodGalleryMarketItems(data.market.endpoints || []);
+        }
+      }
+      renderNav();
+      refreshAdmin();
+      setInterval(refreshAdmin, 3000);
+    });
+}
+
+function renderNav(routeFilter) {
+  var nav = document.getElementById('nav'); nav.innerHTML = '';
+  var dns = {};  // route_prefix → groups数组
+  var dnOrder = [];
+  var activeRoute = routeFilter ? ('/' + String(routeFilter).replace(/^\/+/, '')) : '';
+  var hiddenApiGroups = {
+    '功能说明': true,
+    '推送': true,
+    '数据批量统计': true,
+    '数据统计': true,
+    '日志': true,
+    '用户信息': true,
+    '用户消息': true,
+    '用户自选股': true,
+    '管理': true,
+    '系统': true,
+    '系统版本': true,
+    '排行配置': true,
+    '功能搜索': true,
+    '论坛专栏消息': true,
+    '论坛精选消息': true
+  };
+  API_DATA.groups.forEach(function(g, gi) {
+    if (hiddenApiGroups[g.name_cn]) return;
+    var rp = g.route_prefix || '/d1';
+    if (activeRoute && rp !== activeRoute) return;
+    if (!dns[rp]) { dns[rp] = []; dnOrder.push(rp); }
+    dns[rp].push({group: g, gi: gi});
+  });
+  dnOrder.forEach(function(rp) {
+    var groups = dns[rp];
+    groups.forEach(function(grp) {
+      var g = grp.group, gi = grp.gi;
+      var category = document.createElement('section');
+      category.className = 'market-category legacy-market-category';
+      category.dataset.routePrefix = rp.replace(/^\//, '');
+      var title = document.createElement('div');
+      title.className = 'market-category-title';
+      title.textContent = publicText(g.name_cn);
+      category.appendChild(title);
+      g.apis.forEach(function(api, ai) {
+        var it = document.createElement('button');
+        it.type = 'button';
+        it.className = 'market-endpoint api-item';
+        var method = String(api.method || g.method || 'POST').toUpperCase();
+        var methodClass = method === 'GET' ? 'get' : method === 'WS' ? 'ws' : 'post';
+        var localPath = publicPath(rp + '/' + String(api.host_var || '').replace(/^\/+/, ''));
+        it.innerHTML = '<div class="market-endpoint-line"><span class="market-method ' + methodClass + '">' + escHtml(method) + '</span><span class="market-endpoint-name">' + escHtml(publicText(api.name_cn || api.host_var || '接口')) + '</span></div><span class="market-endpoint-path">' + escHtml(localPath) + '</span>';
+        it.dataset.gi = gi; it.dataset.ai = ai;
+        it.dataset.searchText = publicText([g.name_cn, api.name_cn, method, localPath].join(' ')).toLowerCase();
+        it.onclick = function() { selectApi(gi, ai, it); };
+        category.appendChild(it);
+      });
+      nav.appendChild(category);
+    });
+  });
+}
+
+function filterNav() {
+  var q = document.getElementById('searchInput').value.toLowerCase();
+  document.querySelectorAll('.api-item').forEach(function(it) {
+    var text = it.dataset.searchText || it.textContent;
+    it.style.display = (!q || text.toLowerCase().indexOf(q) >= 0) ? '' : 'none';
+  });
+  document.querySelectorAll('.legacy-market-category').forEach(function(category) {
+    var any = Array.from(category.querySelectorAll('.api-item')).some(function(i) { return i.style.display !== 'none'; });
+    category.style.display = any ? '' : 'none';
+  });
+}
+
+function selectApi(gi, ai, el) {
+  if (window.leaveMarketWorkspace) window.leaveMarketWorkspace();
+  document.querySelectorAll('.api-item').forEach(function(i) { i.classList.remove('active'); });
+  el.classList.add('active');
+  hideWSPanel();
+  var g = API_DATA.groups[gi], api = g.apis[ai]; currentApi = api;
+  currentApi._groupMethod = api.method || g.method || 'POST';
+  currentApi._groupName = g.name_cn || '接口';
+  currentApi._routePrefix = g.route_prefix || '/d1';
+  currentApi._internalParams = {};
+  (api.params || []).forEach(function(p) {
+    var key = String(p.key || '').toLowerCase();
+    if ((key === 'a' || key === 'c') && p.value != null && String(p.value) !== '') {
+      currentApi._internalParams[key] = String(p.value);
+    }
+  });
+  var prefix = g.route_prefix || '/d1';
+  var method = api.method || g.method || 'POST';
+  if (window.productNavActive) window.productNavActive(prefix.replace(/^\//, ''));
+  var hostVar = publicPath(api.host_var || '');
+  var path = prefix + '/' + hostVar.replace(/^\/+/, '');
+  document.getElementById('apiName').textContent = publicText(g.name_cn + '_' + api.name_cn);
+  document.getElementById('apiPath').textContent = method + ' ' + path;
+  if (window.renderLegacyHttpEndpoint) {
+    window.renderLegacyHttpEndpoint({
+      groupName: g.name_cn,
+      apiName: api.name_cn,
+      hostVar: hostVar,
+      prefix: prefix,
+      method: method,
+      params: api.params,
+      response: api.response
+    });
+  }
+  buildBody();
+}
+
+function buildBody() {
+  var inputs = document.querySelectorAll('#paramsTable input[data-param-source="legacy"]'); var parts = []; var seen = {};
+  inputs.forEach(function(inp) {
+    var k = inp.dataset.paramKey || '';
+    var v = inp.dataset.changed === '1' ? inp.value : (inp.dataset.rawValue !== undefined ? inp.dataset.rawValue : inp.value);
+    if (k && v !== undefined && v !== '') {
+      parts.push(encodeURIComponent(k) + '=' + encodeURIComponent(v));
+      seen[k.toLowerCase()] = true;
+    }
+  });
+  // 只有目录字段缺失时才补入固定协议参数；已展示、已编辑的真实值不能被覆盖或重复添加。
+  if (currentApi && currentApi._internalParams) {
+    Object.keys(currentApi._internalParams).forEach(function(key) {
+      if (!seen[String(key).toLowerCase()]) {
+        parts.push(encodeURIComponent(key) + '=' + encodeURIComponent(currentApi._internalParams[key]));
+      }
+    });
+  }
+  currentRawBody = parts.join('&');
+  var rawBody = document.getElementById('rawBody');
+  if (rawBody) {
+    rawBody.value = currentRawBody;
+    rawBody.dataset.generated = '1';
+  }
+}
+
+function syncFromBody() {
+  currentRawBody = null;
+  var rawBody = document.getElementById('rawBody');
+  if (rawBody) rawBody.dataset.generated = '0';
+}
+
+function legacyRequestBody() {
+  var rawBody = document.getElementById('rawBody');
+  return rawBody && rawBody.dataset.generated === '1' && currentRawBody !== null
+    ? currentRawBody : (rawBody ? rawBody.value : '');
+}
+
+function setLegacyResponseMeta(text) {
+  var el = document.getElementById('respStats');
+  if (el) el.textContent = text;
+}
+
+async function sendRequest() {
+  if (!_lastStatus.running) {
+    var msg = !_lastStatus.isLoggedIn ? '请先在顶部登录' : !_lastStatus.isVerified ? '请先兑换后启动数据服务' : '请先点击 [启动] 开启数据服务';
+    document.getElementById('responseBody').innerHTML = '<span style="color:#e67e22">' + msg + '</span>';
+    setLegacyResponseMeta('提示');
+    return;
+  }
+  var addressInput = document.getElementById('legacyRequestUrl');
+  var url = addressInput ? addressInput.value.trim() : '';
+  if (!url) { document.getElementById('responseBody').textContent = '请求地址为空'; setLegacyResponseMeta('提示'); return; }
+  var body = legacyRequestBody();
+  if (!body) { alert('请求体为空'); return; }
+  var isGet = currentApi && currentApi._groupMethod === 'GET';
+  var t0 = performance.now();
+  try {
+    var r;
+    if (isGet) {
+      r = await fetch(url + (url.indexOf('?') >= 0 ? '&' : '?') + body, {method: 'GET'});
+    } else {
+      r = await fetch(url, {method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'}, body: body});
+    }
+    var dur = Math.round(performance.now() - t0), txt = await r.text();
+    stats.total++; stats.time += dur; r.ok ? stats.ok++ : stats.fail++;
+    updateStats(dur);
+    document.getElementById('responseBody').innerHTML = highlightJson(publicText(txt));
+    setLegacyResponseMeta(r.status + ' · ' + dur + 'ms · ' + txt.length + 'B');
+  } catch(e) {
+    var dur = Math.round(performance.now() - t0);
+    stats.total++; stats.fail++; stats.time += dur; updateStats(dur);
+    document.getElementById('responseBody').innerHTML = '<span style="color:#F44747">' + escHtml(e.message) + '</span>';
+    setLegacyResponseMeta('ERR · ' + dur + 'ms');
+  }
+}
+
+function updateStats(last) {
+  var el = function(id) { return document.getElementById(id); };
+  if (el('stTotal')) el('stTotal').textContent = stats.total;
+  if (el('stOk')) el('stOk').textContent = stats.ok;
+  if (el('stFail')) el('stFail').textContent = stats.fail;
+  if (el('stAvg')) el('stAvg').textContent = (stats.total ? Math.round(stats.time / stats.total) : 0);
+  if (el('stLast')) el('stLast').textContent = last;
+}
+
+function clearResponse() {
+  document.getElementById('responseBody').innerHTML = '等待请求...';
+  setLegacyResponseMeta('');
+}
+
+function resetLegacyRequest() {
+  if (!currentApi) { clearResponse(); return; }
+  if (window.renderLegacyHttpEndpoint) {
+    var prefix = currentApi._routePrefix || '/d1';
+    window.renderLegacyHttpEndpoint({
+      groupName: currentApi._groupName || '接口',
+      apiName: currentApi.name_cn,
+      hostVar: publicPath(currentApi.host_var),
+      prefix: prefix,
+      method: currentApi._groupMethod || 'POST',
+      params: currentApi.params,
+      response: currentApi.response
+    });
+    buildBody();
+  }
+}
+
+function copyLegacyRequest() {
+  var url = document.getElementById('legacyRequestUrl');
+  url = url ? url.value.trim() : '';
+  var body = legacyRequestBody();
+  var isGet = currentApi && currentApi._groupMethod === 'GET';
+  var text = isGet ? 'curl -G "' + url + (body ? (url.indexOf('?') >= 0 ? '&' : '?') + body : '') + '"' : 'curl -X POST "' + url + '" -H "Content-Type: application/x-www-form-urlencoded" --data ' + JSON.stringify(body || '');
+  var done = function () { var tip = document.getElementById('legacyResponseTip'); if (tip) tip.textContent = '请求命令已复制。'; };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done).catch(function () { window.prompt('复制下面的请求：', text); });
+  else window.prompt('复制下面的请求：', text);
+}
+
+function highlightJson(txt) {
+  try { var obj = JSON.parse(txt); txt = JSON.stringify(obj, null, 2); } catch(e) {}
+  return txt.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"([^"]+)"(?=\s*:)/g, '<span class="json-key">"$1"</span>')
+    .replace(/:\s*"([^"]*)"/g, ': <span class="json-str">"$1"</span>')
+    .replace(/:\s*(-?\d+\.?\d*)/g, ': <span class="json-num">$1</span>')
+    .replace(/:\s*(true|false)/g, ': <span class="json-bool">$1</span>')
+    .replace(/:\s*(null)/g, ': <span class="json-null">$1</span>');
+}
+
+function escHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+// ── WebSocket 测试 ──
+var _ws1 = null, _ws2 = null, _ws3 = null;
+
+// 通用：显示/隐藏参数行
+function wsShow(id, v) { var r = document.getElementById(id); if (r) r.style.display = v ? '' : 'none'; }
+function wsValue(id, fallback) { var el = document.getElementById(id); return el ? el.value : fallback; }
+var D202_SNAPSHOT_CUTOFF_TIME = 92506;
+function enforceD202CutoffTime() {
+  var input = document.getElementById('wsCutoffTime');
+  if (input) input.value = String(D202_SNAPSHOT_CUTOFF_TIME);
+  return D202_SNAPSHOT_CUTOFF_TIME;
+}
+
+// d101 快照支持多市场代码；网页输入框提供与 Python 示例相同的便捷写法。
+function normalizeD101Code(value) {
+  var code = String(value || '').trim();
+  if (!code) return '';
+  var upper = code.toUpperCase();
+  if (/^\d{6}$/.test(code)) {
+    return /^[569]/.test(code) ? 'SH' + code : 'SZ' + code;
+  }
+  var optionMatch = upper.match(/^(SO|ZO)(\d{8})$/);
+  if (optionMatch) return optionMatch[1] + optionMatch[2];
+  if (/^\d{8}$/.test(code)) return (code.charAt(0) === '9' ? 'ZO' : 'SO') + code;
+  if (/^(IO|HO|MO)\d{4}-[CP]-\d+(?:\.\d+)?$/i.test(code)) {
+    return 'CFFEXOPTION|' + upper;
+  }
+  var separator = code.indexOf('|');
+  if (separator >= 0) {
+    var exchange = code.slice(0, separator).trim().toUpperCase();
+    var payload = code.slice(separator + 1).trim();
+    if (!exchange || !payload) return code;
+    if (['DCE', 'SHFE', 'CZCE', 'INE', 'GFEX'].indexOf(exchange) >= 0) {
+      payload = payload.toLowerCase();
+    } else {
+      payload = payload.toUpperCase();
+    }
+    return exchange + '|' + payload;
+  }
+  if (/^[a-z]{1,3}\d{0,4}$/.test(code)) return 'DCE|' + code.toLowerCase();
+  return upper;
+}
+
+function splitD101Codes(value) {
+  var result = [], seen = {};
+  String(value || '').split(/[,;\s]+/).forEach(function(item) {
+    var code = normalizeD101Code(item);
+    if (code && !seen[code]) {
+      seen[code] = true;
+      result.push(code);
+    }
+  });
+  return result;
+}
+
+function selectD101() {
+  if (typeof wsCloseAll === 'function') wsCloseAll();
+  if (window.leaveMarketWorkspace) window.leaveMarketWorkspace();
+  if (window.productNavActive) window.productNavActive('d101');
+  _wsPath = '/d101';
+  if (window.renderLegacyWsShell) window.renderLegacyWsShell('d101实时推送', '订阅实时行情推送。', _wsPath);
+  document.querySelectorAll('.api-item').forEach(function(i) { i.classList.remove('active'); });
+  document.getElementById('apiName').textContent = 'd101实时推送';
+  document.getElementById('apiPath').textContent = 'WS /d101';
+  var pt = document.getElementById('paramsTable');
+  pt.innerHTML = '<table><tr><th style="width:18%">参数</th><th style="width:8%">必填</th><th style="width:42%">值</th><th>说明</th></tr>' +
+    '<tr><td colspan="4" style="background:#132b42;padding:4px 6px;font-size:10px;color:#8fc7ff">用户文档：<a href="download.html#docs" target="_blank" rel="noopener noreferrer" style="color:#8fc7ff">打开 D101 接口文档</a> · <a href="downloads/docs/d101_fields.md" target="_blank" rel="noopener noreferrer" style="color:#8fc7ff">完整字段目录</a></td></tr>' +
+    '<tr><td>type</td><td class="req">必填</td><td><select id="wsType" onchange="wsUpdateCmdPreview()"><option value="snapshot">snapshot 行情快照 / 市场全推</option><option value="market_event">market_event 盘口异动</option></select></td><td>订阅类型</td></tr>' +
+    '<tr><td>enable</td><td class="opt">选填</td><td><select id="wsEnable" onchange="wsUpdateCmdPreview()"><option value="1">1=订阅</option><option value="0">0=退订</option></select></td><td>默认=订阅</td></tr>' +
+    '<tr id="wsRowUniverse"><td>universe</td><td class="opt">选填</td><td><select id="wsUniverse" onchange="wsUpdateCmdPreview()">' +
+      '<option value="">按代码订阅</option>' +
+      '<option value="cn_hsj_stock">沪深京股票全推</option>' +
+      '<option value="cn_hs_stock">沪深股票全推</option>' +
+      '<option value="cn_sh_stock">沪市股票全推</option>' +
+      '<option value="cn_sz_stock">深市股票全推</option>' +
+      '<option value="cn_star_stock">科创板全推</option>' +
+      '<option value="cn_bse_stock">北交所股票全推</option>' +
+      '<option value="cn_sh_b_stock">沪市 B 股全推</option>' +
+      '<option value="cn_sz_b_stock">深市 B 股全推</option>' +
+      '<option value="cn_index">指数全推</option>' +
+      '<option value="cn_fund">基金全推</option>' +
+      '<option value="cn_sh_fund">沪市基金全推</option>' +
+      '<option value="cn_sz_fund">深市基金全推</option>' +
+      '<option value="cn_reit">REITs 全推</option>' +
+      '<option value="cn_sh_bond">沪市债券全推</option>' +
+      '<option value="cn_sz_bond">深市债券全推</option>' +
+      '<option value="cn_option">期权全推</option>' +
+      '<option value="cn_etf_option">ETF 期权全推</option>' +
+      '<option value="cn_option_call">认购期权全推</option>' +
+      '<option value="cn_option_put">认沽期权全推</option>' +
+      '<option value="cn_cffex_index_futures">中金所股指期货全推</option>' +
+      '<option value="cn_cffex_treasury_futures">中金所国债期货全推</option>' +
+      '<option value="cn_cffex_futures">中金所期货全推</option>' +
+    '</select></td><td>按市场或品种全推；与 codes 二选一，服务端会先获取代码列表再建立订阅</td></tr>' +
+     '<tr id="wsRowLimit"><td>limit</td><td class="opt">选填</td><td><input id="wsLimit" value="0" inputmode="numeric" oninput="wsUpdateCmdPreview()"></td><td>universe 模式的代码数量上限；0=全部；每条底层连接容量为6000只，超出由服务端在同一命令内拆分</td></tr>' +
+    '<tr id="wsRowCodes"><td>codes</td><td class="req">必填</td><td><input id="wsCodes" value="SZ000001,SH600000" oninput="wsUpdateCmdPreview()"></td><td>代码可用逗号/空格/分号分隔：90007351、jmm、NASDAQ|GSUN、MO2609-P-7000 等；预览会自动规范化为服务端代码</td></tr>' +
+     '<tr id="wsRowFields"><td>fields</td><td class="opt">选填</td><td><input id="wsFields" value="" placeholder="如code,name,price,high" oninput="wsUpdateCmdPreview()"></td><td>字段名，逗号分隔，单条最多255个；留空使用默认字段。<a href="downloads/docs/d101_fields.md" target="_blank" rel="noopener noreferrer">查看203字段目录</a></td></tr>' +
+    '<tr id="wsRowMode"><td>mode</td><td class="opt">选填</td><td><select id="wsMode" onchange="wsUpdateCmdPreview()"><option value="1">1=当前/持续</option><option value="2">2=单次历史页</option></select></td><td>请求模式(仅market_event)</td></tr>' +
+    '<tr id="wsRowCursorTime"><td>cursor.time</td><td class="opt">历史必填</td><td><input id="wsCursorTime" value="" placeholder="如145452" oninput="wsUpdateCmdPreview()"></td><td>上一页最后一行的时间HHMMSS(仅market_event mode=2)</td></tr>' +
+    '<tr id="wsRowCursorSeq"><td>cursor.seq</td><td class="opt">历史必填</td><td><input id="wsCursorSeq" value="" placeholder="如15442" oninput="wsUpdateCmdPreview()"></td><td>上一页最后一行的序号(仅market_event mode=2)</td></tr>' +
+    '<tr id="wsRowCount"><td>count</td><td class="opt">选填</td><td><input id="wsCount" value="100" oninput="wsUpdateCmdPreview()"></td><td>请求条数(仅market_event)</td></tr>' +
+    '<tr id="wsRowSeq"><td>seq</td><td class="opt">选填</td><td><input id="wsSeq" value="" placeholder="自动递增" oninput="wsUpdateCmdPreview()"></td><td>序列号，留空自动递增</td></tr>' +
+    '</table>';
+  if (window.normalizeLegacyWsParams) window.normalizeLegacyWsParams();
+  document.getElementById('rawBody').value = '';
+  showWSPanel();
+  wsUpdateCmdPreview();
+}
+
+// ── d201 /d201 ──
+function selectD201() {
+  if (typeof wsCloseAll === 'function') wsCloseAll();
+  if (window.leaveMarketWorkspace) window.leaveMarketWorkspace();
+  if (window.productNavActive) window.productNavActive('d201');
+  _wsPath = '/d201';
+  if (window.renderLegacyWsShell) window.renderLegacyWsShell('d201实时推送', '订阅盘口、委托和成交实时数据。', _wsPath);
+  document.querySelectorAll('.api-item').forEach(function(i) { i.classList.remove('active'); });
+  document.getElementById('apiName').textContent = 'd201实时推送';
+  document.getElementById('apiPath').textContent = 'WS /d201';
+  var pt = document.getElementById('paramsTable');
+  pt.innerHTML = '<table><tr><th style="width:18%">参数</th><th style="width:8%">必填</th><th style="width:42%">值</th><th>说明</th></tr>' +
+    '<tr><td>type</td><td class="req">必填</td><td><select id="wsType" onchange="wsUpdateCmdPreview()"><option value="entrust">entrust 委托</option><option value="trade">trade 成交</option><option value="holoqueue">holoqueue 全息队列</option><option value="price">price 单个价位</option><option value="buysell">buysell 买卖队列</option><option value="thousand">thousand 千档行情</option></select> <button id="d201PythonBtn" onclick="openPythonExample()" style="display:none;padding:2px 7px;border:1px solid #3377EB;border-radius:3px;background:#3377EB;color:#fff;font-size:10px;cursor:pointer" title="复制或下载多股票 buysell Python 示例">Python示例</button></td><td>订阅类型；多只股票持续跟踪 buysell 时建议每只股票单独建立连接</td></tr>' +
+    '<tr><td colspan="4" style="background:#132b42;padding:4px 6px;font-size:10px;color:#8fc7ff">使用提示：一条连接可以组合不同方法；多只股票持续订阅时，建议每只股票一个 WebSocket。收到消息后请遍历完整 list，并按 data.code 更新对应股票。</td></tr>' +
+    '<tr><td>code</td><td class="req">必填</td><td><input id="wsCode" value="SZ002177" oninput="wsUpdateCmdPreview()"></td><td>股票编码(8位)</td></tr>' +
+    '<tr><td>enable</td><td class="opt">选填</td><td><select id="wsEnable" onchange="wsUpdateCmdPreview()"><option value="1">1=订阅</option><option value="0">0=退订</option><option value="2">2=单次</option></select></td><td>默认=订阅</td></tr>' +
+    '<tr id="l2RowUserParam"><td>userParam</td><td class="opt">选填</td><td><input id="wsUserParam" value="" oninput="wsUpdateCmdPreview()"></td><td>用户自定义参数(0~65535)</td></tr>' +
+    '<tr><td colspan="4" style="background:#0f3460;padding:2px 6px;font-size:10px;color:#e94560">▼ 类型专属参数</td></tr>' +
+    '<tr id="l2RowDir" style="display:none"><td>direction</td><td class="opt">选填</td><td><select id="wsDirection" onchange="wsUpdateCmdPreview()"><option value="0">0=买</option><option value="1">1=卖</option></select></td><td>买卖方向(price)</td></tr>' +
+    '<tr id="l2RowPrice" style="display:none"><td>priceCent</td><td class="opt">选填</td><td><input id="wsPriceCent" value="7950" oninput="wsUpdateCmdPreview()"></td><td>价位=元*1000(price)</td></tr>' +
+    '<tr id="l2RowDown" style="display:none"><td>downLimit</td><td class="opt">选填</td><td><input id="wsDownLimit" value="71000" oninput="wsUpdateCmdPreview()"></td><td>跌停价厘(thousand)</td></tr>' +
+    '<tr id="l2RowUp" style="display:none"><td>upLimit</td><td class="opt">选填</td><td><input id="wsUpLimit" value="86800" oninput="wsUpdateCmdPreview()"></td><td>涨停价厘(thousand)</td></tr>' +
+    '<tr id="l2RowCount" style="display:none"><td>count</td><td class="opt">选填</td><td><input id="wsCount" value="60" oninput="wsUpdateCmdPreview()"></td><td>请求数量(正数顺序推实时,负数倒序查历史)只对trade/entrust有效</td></tr>' +
+    '<tr id="l2RowHistory" style="display:none"><td>history</td><td class="opt">选填</td><td><select id="wsHistory" onchange="wsUpdateCmdPreview()"><option value="0">0=实时</option><option value="1">1=查历史</option></select></td><td>查历史标志(entrust)</td></tr>' +
+    '<tr id="l2RowOrderId" style="display:none"><td>orderId</td><td class="opt">选填</td><td><input id="wsOrderId" value="" oninput="wsUpdateCmdPreview()"></td><td>起始订单号(entrust查历史)</td></tr>' +
+    '<tr id="l2RowSeqPos" style="display:none"><td>seqPos</td><td class="opt">选填</td><td><input id="wsSeqPos" value="" oninput="wsUpdateCmdPreview()"></td><td>起始序号(trade查历史)</td></tr>' +
+    '<tr id="l2RowTimeOfDay" style="display:none"><td>timeOfDay</td><td class="opt">选填</td><td><input id="wsTimeOfDay" value="" oninput="wsUpdateCmdPreview()"></td><td>时分秒(trade查历史,如150000)</td></tr>' +
+    '<tr id="l2RowBuy" style="display:none"><td>buyLevels</td><td class="opt">选填</td><td><input id="wsBuyLevels" value="2" oninput="wsUpdateCmdPreview()"></td><td>委买档数(buysell)</td></tr>' +
+    '<tr id="l2RowSell" style="display:none"><td>sellLevels</td><td class="opt">选填</td><td><input id="wsSellLevels" value="2" oninput="wsUpdateCmdPreview()"></td><td>委卖档数(buysell)</td></tr>' +
+    '<tr id="l2RowSubDis" style="display:none"><td>subDisplayCount</td><td class="opt">选填</td><td><input id="wsSubDisplayCount" value="6" oninput="wsUpdateCmdPreview()"></td><td>子记录数(holoqueue)</td></tr>' +
+    '</table>';
+  if (window.normalizeLegacyWsParams) window.normalizeLegacyWsParams();
+  document.getElementById('rawBody').value = '';
+  showWSPanel();
+  wsUpdateCmdPreview();
+}
+
+function showD202Notice() {
+  var m = document.getElementById('d202NoticeModal');
+  if (m) m.style.display = 'flex';
+}
+
+function closeD202Notice() {
+  var m = document.getElementById('d202NoticeModal');
+  if (m) m.style.display = 'none';
+}
+
+function selectD202() {
+  showD202Notice();
+  if (typeof wsCloseAll === 'function') wsCloseAll();
+  if (window.leaveMarketWorkspace) window.leaveMarketWorkspace();
+  if (window.productNavActive) window.productNavActive('d202');
+  _wsPath = '/d202';
+  if (window.renderLegacyWsShell) window.renderLegacyWsShell('d202实时推送(备用)', '订阅快照、委托、成交、大单、队列实时数据。', _wsPath);
+  document.querySelectorAll('.api-item').forEach(function(i) { i.classList.remove('active'); });
+  document.getElementById('apiName').textContent = 'd202实时推送(备用)';
+  document.getElementById('apiPath').textContent = 'WS /d202';
+  var pt = document.getElementById('paramsTable');
+  pt.innerHTML = '<div style="background:rgba(230,126,34,.14);border:1px solid rgba(230,126,34,.45);color:#f5b041;padding:8px 12px;border-radius:6px;margin-bottom:12px;font-size:12px;line-height:1.6">' +
+    '⚠️ <strong>D202 选型须知：</strong>D202 优势为价格实惠、支持早盘竞价复盘；建议<strong>单次按需聚焦订阅核心股票池</strong>，尽量避免同时并发订阅过多只数。量大、低延迟或极速打板监控请选 <a href="javascript:void(0)" onclick="selectD201()" style="color:#4EC9B0;font-weight:bold;text-decoration:underline">D201 深度行情</a>。<br>' +
+    '💪 <strong>技术攻坚：</strong>我们正全力优化底层并发架构、持续加大力度提升 D202 稳定性，让更多量化开发者用上便宜好用的优质 L2 行情！<br>' +
+    '💡 <strong>黄金架构建议（适用于 D201 / D202）：</strong>推荐使用 <strong>D101 全推（203 字段可选）</strong>进行全市场极速扫描初筛优质标的，再<strong>按需订阅 L2 深度行情</strong>进行毫秒级精准跟踪与策略监控！' +
+    '</div>' +
+    '<table><tr><th style="width:18%">参数</th><th style="width:8%">必填</th><th style="width:42%">值</th><th>说明</th></tr>' +
+    '<tr><td>type</td><td class="req">必填</td><td><select id="wsType" onchange="wsUpdateCmdPreview()"><option value="thousand">thousand 千档行情</option><option value="entrust">entrust 逐笔委托</option><option value="trade">trade 成交还原</option><option value="bigorder">bigorder 大单资金</option><option value="queue">queue 排队情况</option><option value="snapshot">snapshot 全市场一键快照</option></select> <button id="d202PythonBtn" onclick="openPythonExample()" style="display:none;padding:2px 7px;border:1px solid #3377EB;border-radius:3px;background:#3377EB;color:#fff;font-size:10px;cursor:pointer" title="复制或下载 snapshot Python 测试脚本">Python示例</button></td><td>订阅类型；snapshot 自动获取全部股票并流式返回</td></tr>' +
+    '<tr id="d202RowCode"><td>code</td><td class="req">必填</td><td><input id="wsCode" value="SZ300773" oninput="wsUpdateCmdPreview()"></td><td>股票编码(8位, 如SH600519/SZ000001)</td></tr>' +
+    '<tr><td>enable</td><td class="opt">选填</td><td><select id="wsEnable" onchange="wsUpdateCmdPreview()"><option value="1">1=订阅</option><option value="0">0=退订</option></select></td><td>默认=订阅</td></tr>' +
+    '<tr><td>userParam</td><td class="opt">选填</td><td><input id="wsUserParamD202" value="" oninput="wsUpdateCmdPreview()"></td><td>透传标识(uint32, 响应原样带回)</td></tr>' +
+    '<tr><td colspan="4" style="background:#0f3460;padding:2px 6px;font-size:10px;color:#e67e22">▼ 类型专属参数</td></tr>' +
+    '<tr id="d202RowLevels" style="display:none"><td>levels</td><td class="opt">选填</td><td><input id="wsLevels" value="10" oninput="wsUpdateCmdPreview()"></td><td>档数(thousand)</td></tr>' +
+    '<tr id="d202RowCount" style="display:none"><td>count</td><td class="opt">选填</td><td><input id="wsCount" value="50" oninput="wsUpdateCmdPreview()"></td><td>单页请求条数；snapshot 会自动分页拼接全部委托/成交</td></tr>' +
+    '<tr id="d202RowStartSeq" style="display:none"><td>startSeq</td><td class="opt">选填</td><td><input id="wsStartSeq" value="" placeholder="0=最新" oninput="wsUpdateCmdPreview()"></td><td>起始序号；snapshot 固定从1开始获取早盘竞价</td></tr>' +
+    '<tr id="d202RowCutoffTime" style="display:none"><td>cutoffTime</td><td class="opt">固定</td><td><input id="wsCutoffTime" value="92506" placeholder="固定92506" inputmode="numeric" readonly></td><td>固定为92506；只获取早盘竞价，服务端也会强制忽略其他值</td></tr>' +
+    '<tr id="d202RowWorkers" style="display:none"><td>workers</td><td class="opt">选填</td><td><input id="wsWorkers" value="8" oninput="wsUpdateCmdPreview()"></td><td>snapshot 股票级并发度，可按机器和网络情况调整</td></tr>' +
+    '<tr id="d202RowLimit" style="display:none"><td>limit</td><td class="opt">选填</td><td><input id="wsLimit" value="0" oninput="wsUpdateCmdPreview()"></td><td>自动股票列表数量；0=全部，测试可填10</td></tr>' +
+    '<tr id="d202RowFilter" style="display:none"><td>filter</td><td class="opt">选填</td><td><select id="wsFilter" onchange="wsUpdateCmdPreview()"><option value="0">0=不筛选</option><option value="1">1=100万</option><option value="2">2=300万</option><option value="3">3=500万</option><option value="4">4=1000万</option></select></td><td>筛选金额(entrust/snapshot)</td></tr>' +
+    '<tr id="d202RowDir" style="display:none"><td>dir</td><td class="opt">选填</td><td><select id="wsDir" onchange="wsUpdateCmdPreview()"><option value="B">B=买盘</option><option value="S">S=卖盘</option></select></td><td>买卖方向(queue)</td></tr>' +
+    '<tr id="d202RowLevel" style="display:none"><td>level</td><td class="opt">选填</td><td><input id="wsLevel" value="0" oninput="wsUpdateCmdPreview()"></td><td>档位0-based(queue, 0=1档)</td></tr>' +
+    '</table>';
+  if (window.normalizeLegacyWsParams) window.normalizeLegacyWsParams();
+  document.getElementById('rawBody').value = '';
+  showWSPanel();
+  wsUpdateCmdPreview();
+}
+
+function wsUpdateCmdPreview() {
+  var cmd = {};
+  if (_wsPath === '/d202') {
+    var cmd = {};
+    cmd.type = wsValue('wsType', 'thousand');
+    if (cmd.type !== 'snapshot') cmd.code = wsValue('wsCode', '').trim();
+    cmd.enable = parseInt(wsValue('wsEnable', '1'), 10);
+    var up = wsValue('wsUserParamD202', '').trim();
+    if (up) cmd.userParam = parseInt(up);
+    var typ = cmd.type;
+    wsShow('d202RowCode', typ !== 'snapshot');
+    wsShow('d202RowLevels', typ === 'thousand' || typ === 'snapshot');
+    wsShow('d202RowCount', typ === 'entrust' || typ === 'trade' || typ === 'bigorder' || typ === 'snapshot');
+    wsShow('d202RowStartSeq', typ === 'entrust' || typ === 'trade' || typ === 'bigorder');
+    wsShow('d202RowCutoffTime', typ === 'snapshot');
+    wsShow('d202RowWorkers', typ === 'snapshot');
+    wsShow('d202RowLimit', typ === 'snapshot');
+    wsShow('d202RowFilter', typ === 'entrust' || typ === 'snapshot');
+    wsShow('d202PythonBtn', typ === 'snapshot');
+    wsShow('d202RowDir', typ === 'queue');
+    wsShow('d202RowLevel', typ === 'queue');
+    if (typ === 'thousand' || typ === 'snapshot') {
+      cmd.levels = parseInt(wsValue('wsLevels', '10'), 10) || 10;
+    }
+    if (typ === 'entrust' || typ === 'trade' || typ === 'bigorder' || typ === 'snapshot') {
+      cmd.count = parseInt(wsValue('wsCount', '50'), 10) || 50;
+    }
+    if (typ === 'entrust' || typ === 'snapshot') {
+      cmd.filter = parseInt(wsValue('wsFilter', '0'), 10) || 0;
+    }
+    var ss = wsValue('wsStartSeq', '').trim();
+    if (ss && (typ === 'entrust' || typ === 'trade' || typ === 'bigorder')) cmd.startSeq = parseInt(ss) || 0;
+    if (typ === 'snapshot') {
+      cmd.startSeq = 1;
+      cmd.cutoffTime = enforceD202CutoffTime();
+      cmd.workers = parseInt(wsValue('wsWorkers', '8'), 10) || 8;
+      cmd.limit = Math.max(0, parseInt(wsValue('wsLimit', '0'), 10) || 0);
+    }
+    if (typ === 'queue') {
+      cmd.dir = wsValue('wsDir', 'B').trim();
+      cmd.level = parseInt(wsValue('wsLevel', '0'), 10) || 0;
+    }
+    document.getElementById('rawBody').value = JSON.stringify(cmd);
+    updateWSRef();
+    return;
+  }
+  if (_wsPath === '/d201') {
+    cmd.type = wsValue('wsType', 'entrust');
+    cmd.code = wsValue('wsCode', '').trim();
+    var typ = cmd.type;
+    var up = wsValue('wsUserParam', '').trim();
+    if (up) cmd.userParam = parseInt(up);
+    cmd.enable = parseInt(wsValue('wsEnable', '1'), 10);
+    wsShow('l2RowDir',   typ === 'price');
+    wsShow('l2RowPrice', typ === 'price');
+    wsShow('l2RowDown',  typ === 'thousand');
+    wsShow('l2RowUp',    typ === 'thousand');
+    wsShow('l2RowCount', typ === 'trade' || typ === 'entrust');
+	    wsShow('l2RowHistory', typ === 'entrust');
+	    wsShow('l2RowOrderId', typ === 'entrust');
+	    wsShow('l2RowSeqPos', typ === 'trade');
+	    wsShow('l2RowTimeOfDay', typ === 'trade');
+    wsShow('l2RowBuy',   typ === 'buysell');
+    wsShow('l2RowSell',  typ === 'buysell');
+    wsShow('l2RowSubDis',    typ === 'holoqueue');
+    wsShow('d201PythonBtn', typ === 'buysell');
+    if (typ === 'price') {
+      cmd.direction = parseInt(wsValue('wsDirection', '0'), 10);
+      cmd.priceCent = parseInt(wsValue('wsPriceCent', '0'), 10) || 0;
+    }
+    if (typ === 'trade' || typ === 'entrust') {
+      cmd.count = parseInt(wsValue('wsCount', '0'), 10) || 0;
+    }
+    if (typ === 'entrust') {
+      cmd.history = parseInt(wsValue('wsHistory', '0'), 10);
+      var oid = wsValue('wsOrderId', '').trim();
+      if (oid) cmd.orderId = parseInt(oid, 10);
+    }
+    if (typ === 'trade') {
+      var sp = wsValue('wsSeqPos', '').trim();
+      if (sp) cmd.seqPos = parseInt(sp, 10);
+      var tod = wsValue('wsTimeOfDay', '').trim();
+      if (tod) cmd.timeOfDay = parseInt(tod, 10);
+    }
+    if (typ === 'thousand') {
+      cmd.downLimit = parseInt(wsValue('wsDownLimit', '0'), 10) || 0;
+      cmd.upLimit = parseInt(wsValue('wsUpLimit', '0'), 10) || 0;
+    }
+    if (typ === 'buysell') {
+      cmd.buyLevels = parseInt(wsValue('wsBuyLevels', '2'), 10) || 2;
+      cmd.sellLevels = parseInt(wsValue('wsSellLevels', '2'), 10) || 2;
+    }
+    if (typ === 'holoqueue') {
+      cmd.subDisplayCount = parseInt(wsValue('wsSubDisplayCount', '6'), 10) || 6;
+    }
+  } else {
+    var typ = document.getElementById('wsType').value;
+    cmd.type = typ;
+    cmd.enable = parseInt(document.getElementById('wsEnable').value);
+    // 显示/隐藏各类型专属行
+    var universe = typ === 'snapshot' ? wsValue('wsUniverse', '').trim() : '';
+    wsShow('wsRowUniverse', typ === 'snapshot');
+    wsShow('wsRowLimit', typ === 'snapshot' && !!universe);
+    wsShow('wsRowCodes',  typ === 'snapshot' && !universe);
+    wsShow('wsRowFields', typ === 'snapshot');
+    wsShow('wsRowCount',  typ === 'market_event');
+    wsShow('wsRowMode',   typ === 'market_event');
+    var eventMode = typ === 'market_event' ? parseInt(document.getElementById('wsMode').value) : 1;
+    wsShow('wsRowCursorTime', typ === 'market_event' && eventMode === 2);
+    wsShow('wsRowCursorSeq',  typ === 'market_event' && eventMode === 2);
+    if (typ === 'snapshot') {
+      if (universe) {
+        cmd.universe = universe;
+        cmd.limit = Math.max(0, parseInt(wsValue('wsLimit', '0'), 10) || 0);
+      } else {
+        cmd.codes = splitD101Codes(wsValue('wsCodes', ''));
+      }
+    }
+    if (typ === 'snapshot') {
+      var fs = (document.getElementById('wsFields').value||'').split(',').map(function(s){return s.trim()}).filter(Boolean);
+      if (fs.length) cmd.fields = fs;
+    }
+    if (typ === 'market_event') {
+      cmd.mode = eventMode;
+      var eventCount = parseInt(document.getElementById('wsCount').value);
+      if (eventCount) cmd.count = eventMode === 2 ? -Math.abs(eventCount) : Math.abs(eventCount);
+      if (eventMode === 2) {
+        var cursorTime = (document.getElementById('wsCursorTime').value || '').trim();
+        var cursorSeq = (document.getElementById('wsCursorSeq').value || '').trim();
+        if (cursorTime && cursorSeq) {
+          cmd.cursor = {time: parseInt(cursorTime), seq: parseInt(cursorSeq)};
+        }
+      }
+    }
+    var seq = parseInt(document.getElementById('wsSeq').value);
+    if (seq) cmd.seq = seq;
+  }
+  // D101 的一个 TAB 请求只对应一条订阅命令；发送函数仍兼容数组，
+  // 但预览不再把单条命令包成“多命令数组”，避免误导用户分批。
+  document.getElementById('rawBody').value = JSON.stringify(cmd);
+  updateWSRef();
+}
+// ── 实时方法参考 ──
+var _l1Ref = {
+  snapshot: {
+    name:'行情快照 / 市场全推',freq:'3秒(每只股票独立推送，有变化即推)',
+     desc:'实时行情快照。可用 codes 精确订阅多只标的，也可用 universe 按沪深京、指数、基金、债券、期权、中金所期货等市场或品种全推。universe 模式由服务端先获取代码列表，再建立全量订阅；limit=0 表示全部。\n代码输入支持六位 A 股、八位期权、商品期货和海外市场，例如 90007351、jmm、DCE|jmm、NASDAQ|GSUN、MO2609-P-7000；网页预览会自动补齐或规范化市场标识。\n每只标的约3秒更新一次，有数据变化时才推送。默认返回35个字段，也可以从完整203字段目录中按需选择，单次最多255个；代码超过6000只时由服务端在同一条命令内按容量拆分。\n\n⚡ 支持与其他方法组合成数组一次发送，同时订阅多个类型。',
+     cmdSample:'[{"type":"snapshot","universe":"cn_hsj_stock","limit":0,"fields":["code","name","price"],"enable":1}]\n\n# 指定多市场标的（网页会将便捷写法转成规范代码）\n[{"type":"snapshot","codes":["90007351","jmm","NASDAQ|GSUN","MO2609-P-7000"],"enable":1}]\n\n# 规范代码\n[{"type":"snapshot","codes":["ZO90007351","DCE|jmm","NASDAQ|GSUN","CFFEXOPTION|MO2609-P-7000"],"enable":1}]\n\n# 批量示例: 同时订阅行情快照+盘口异动\n[{"type":"snapshot","universe":"cn_hsj_stock","limit":0,"enable":1},{"type":"market_event","mode":1,"count":100,"enable":1}]',
+    respSample:'{"type":"snapshot","sub":"snapshot","data":[{...默认35个字段...},...],"ts":...}'
+  },
+  market_event: {
+    name:'盘口异动',freq:'3秒(有异动时推送)',
+    desc:'盘口异动事件。无需传codes；mode=1获取当前页并持续接收，mode=2使用上一页最后一行的time+seq游标查询当日历史。服务端已将底层类型转译为type_name和type_color，用户无需了解底层编号。',
+    cmdSample:'[{"type":"market_event","mode":1,"count":100,"enable":1}]\n\n# 历史下一页\n[{"type":"market_event","mode":2,"count":-100,"cursor":{"time":145452,"seq":15442},"enable":1}]',
+    respSample:'{"type":"market_event","data":[{"code":"SH600000","time":145637,"seq":15529,"type_name":"大笔买入","type_color":0,"info":"..."}],"ts":...}'
+  }
+};
+var _l2Ref = {
+  buysell: {
+    name:'买卖队列',freq:'首次快照 + 有变化推送',
+    desc:'五档/十档买卖盘口数据。首次订阅返回当前盘口，后续在盘口发生变化时推送，频率随市场活动变化。多只股票持续跟踪时，建议每只股票单独建立 WebSocket；页面上的 Python 示例可直接运行。',
+    topFields:'userParam|用户参数,code|代码,flag|标志,totalBuyVolume|总买量,totalBuyAmount|总买金额,buyTotalLevels|买总档数,buyLevelCount|当前买档数',
+    subFields:'buyPrice[]|买价位,buyVolume[]|买手数,buySeq[]|买排队号,buyField4[]|待确认,buyAmount[]|买金额',
+    subFields2:'sellPrice[]|卖价位,sellVolume[]|卖手数,sellSeq[]|卖排队号,sellField4[]|待确认,sellAmount[]|卖金额',
+    sample:'{"type":"buysell","data":{"userParam":80,"code":"SZ002177","flag":1,"totalBuyVolume":...,"buyLevelCount":2,"buyPrice":[795,794],"buyVolume":[1651,2486],...}}'
+  },
+  price: {
+    name:'单个价位(单笔逐笔)',freq:'实时(每笔变动)',
+    desc:'盯住一个特定价位的所有委托明细变动。每个变动包含委托号、手数和状态。\n用于分析某个价位的排队情况、找自己的单子排在第几位。',
+    topFields:'userParam|用户参数,code|代码,direction|买卖方向(0买1卖),price|盯住的价位(厘),isFirst|是否首包(1=含总量),totalVolume|总手数(首包),totalAmount|总金额(首包),totalCount|总笔数(首包),seq|序号(首包),curCount|当前笔数',
+    subFields:'volume|手数,id|委托号(排队号),amount|金额,bigOrder|大单标志(1=大单),status|状态(见下表)',
+    subTitle:'子记录字段 (records[]) — 与全息队列子记录结构相同',
+    statusCodes:true,
+    sample:'{"type":"price","data":{"userParam":74,"code":"SZ002177","direction":0,"price":7950,"isFirst":1,"totalVolume":2486,"totalAmount":1973884,"totalCount":112,"curCount":112,"records":[{"volume":30,"id":60386336,"amount":23820,"bigOrder":0,"status":0},...]}}'
+  },
+  trade: {
+    name:'成交',freq:'实时(每笔成交)',
+    desc:'逐笔成交明细，显示每笔成交的时间、价格、手数、买卖方向。\n含买卖委托号，可追踪大单拆分。',
+    topFields:'userParam|用户参数,code|代码,totalCount|总笔数,count|本次笔数',
+    subFields:'time|时间(HHmmss),seq|序号,price|价格,volume|成交手数,sellVolume|卖方手数,buyVolume|买方手数,buyOrderId|买委托号,sellOrderId|卖委托号,active|主动标志,status|成交状态,buySize|买大单,sellSize|卖大单,buyAmount|买金额,sellAmount|卖金额',
+    sample:'{"type":"trade","data":{"userParam":136,"code":"SZ002177","totalCount":60,"count":60,"time":[150000,...],"price":[795,...],"volume":[1,...],...}}'
+  },
+  entrust: {
+    name:'委托',freq:'实时(每笔委托)',
+    desc:'逐笔委托明细。每笔委托的价格、手数、时间。\n用于监控委托流水，分析挂单/撤单行为。\n\n⚡ 支持批量：可与其他方法组合成数组一次发送。',
+    topFields:'userParam|用户参数,code|代码,count|本次数量',
+    subFields:'time|时间(HHmmss),orderId|委托号,price|价格,volume|手数,amount|金额,priceType|报价类型,size|大小标志,direction|买卖方向(0买1卖)',
+    sample:'{"type":"entrust","data":{"userParam":167,"code":"SZ002177","count":150,"time":[145959,...],"orderId":[60544210,...],"price":[795,...],...}}'
+  },
+  thousand: {
+    name:'千档行情',freq:'3秒(定期快照)',
+    desc:'全价位深度行情快照，包含所有价位的买卖盘手数。\n数据量较大，适合看全局盘口分布。',
+    topFields:'userParam|用户参数,code|代码,flag|标志,totalCount|总档数,curCount|当前档数',
+    subFields:'price|价位,volume|手数,direction|买卖方向(0买1卖)',
+    sample:'{"type":"thousand","data":{"userParam":64,"code":"SZ002177","flag":2,"totalCount":153,"curCount":153,"records":[{"price":795,"volume":1651,"direction":0},...]}}'
+  },
+  holoqueue: {
+    name:'全息队列',freq:'实时(每笔变动)',
+    desc:'最详细的盘口数据——每个价位上的每一笔委托明细。\n包含委托号、排队位置、金额，可精确推算自己单子的排队进度。\n数据量非常大，建议按需订阅。',
+    topFields:'userParam|用户参数,code|代码,flag|标志(1字节),levelCount|档位数',
+    subFields:'changeType|变动类型(1=减价增价,2=更新),direction|买卖方向(0买1卖),removePrice|减少价位(changeType=1时),price|价位,volume|总手数,amount|总金额,bigOrder|大单,queueCount|排队总数,displayCnt|子记录数,records[]|子记录(结构同单个价位)',
+    subTitle:'层级字段 (levels[])',
+    subFields2:'子记录字段 (levels[].records[]) — 与单个价位的 records[] 结构完全相同',
+    statusCodes:true,
+    sample:'{"type":"holoqueue","data":{"userParam":66,"code":"SZ002177","flag":2,"levelCount":20,"levels":[{"changeType":1,"direction":0,"removePrice":0,"price":795,"volume":1651,"amount":1312545,"bigOrder":1,"queueCount":45,"displayCnt":6,"records":[{"volume":29,"id":60453109,"amount":23055,"bigOrder":0,"status":0},...]},...]}}'
+  }
+};
+
+var _d202Ref = {
+  snapshot: {
+    name: '全市场一键快照', freq: '固定并发坑位，逐股票流式返回',
+    desc: '服务端先获取可用股票代码列表，再并发请求十档、逐笔委托和成交；snapshot 固定从最早页顺序获取到 09:25:06，且不保留截止后的记录，避免全日回溯占用大量资源；每只股票完成后立即推送，最后发送 snapshot_done。选择 snapshot 后，参数行旁的“Python示例”可复制或下载客户测试脚本。',
+    topFields: 'code|代码,thousand|十档/深度,entrust|逐笔委托,trade|成交还原',
+    subFields: 'progress.completed|已完成数量,progress.total|股票总数,progress.ok|该股票三类请求是否全部成功',
+    sample: '{"type":"snapshot","data":{"code":"SZ300773","thousand":{...},"entrust":{...},"trade":{...}},"progress":{"completed":1,"total":5200,"ok":true}}'
+  },
+  thousand: {
+    name: '千档行情', freq: '实时(有变化推送)',
+    desc: '全价位深度行情快照。包含所有价位的买卖盘手数、总买总卖量额。',
+    topFields: 'code|代码,latest|最新价(分),totalBuyVol|总买手,totalSellVol|总卖手,totalBuyAmt|总买额(万),totalSellAmt|总卖额(万),depthTime|深度时间',
+    subFields: 'buys[].p|买价(分),buys[].v|买手数,sells[].p|卖价(分),sells[].v|卖手数',
+    sample: '{"type":"thousand","data":{"code":"SZ300773","latest":2648,"totalBuyVol":17378,"buys":[{"p":2648,"v":175}],"sells":[{"p":2649,"v":314}]}}'
+  },
+  entrust: {
+    name: '逐笔委托', freq: '实时(有变化推送)',
+    desc: '逐笔委托明细。每笔委托的时间、价格、手数、买卖方向。',
+    topFields: 'code|代码,startSeq|起始序号,rowCount|本次条数',
+    subFields: 'rows[].seq|序号,rows[].t|时间,rows[].p|价格(分),rows[].v|手数,rows[].d|方向(B买/S卖)',
+    sample: '{"type":"entrust","data":{"code":"SZ300773","startSeq":39520,"rowCount":8,"rows":[{"seq":39520,"t":111944,"p":2470,"v":20,"d":"S"}]}}'
+  },
+  trade: {
+    name: '成交还原', freq: '实时(有变化推送)',
+    desc: '逐笔成交明细。每笔成交的时间、价格、手数、买卖方向、买卖双方信息。',
+    topFields: 'code|代码,startSeq|起始序号,rowCount|本次条数',
+    subFields: 'rows[].seq|序号,rows[].t|时间,rows[].p|价格(分),rows[].v|手数,rows[].d|方向(B买/S卖),rows[].buyer|买方ID,rows[].seller|卖方ID,rows[].buyVol|买手,rows[].sellVol|卖手',
+    sample: '{"type":"trade","data":{"code":"SZ300773","startSeq":1000,"rowCount":50,"rows":[{"seq":1000,"t":145945,"p":2648,"v":5,"d":66,"buyer":123,"seller":456,"buyVol":10,"sellVol":5}]}}'
+  },
+  queue: {
+    name: '排队情况', freq: '实时(有变化推送)',
+    desc: '指定价位上的排队委托量分布。',
+    topFields: 'code|代码,dir|方向(B买/S卖),totalCount|总排队量,batchCount|本次返回条数',
+    subFields: 'volumes[]|排队量数组',
+    sample: '{"type":"queue","data":{"code":"SZ300773","dir":"B","totalCount":1000,"batchCount":100,"volumes":[30,50,100]}}'
+  },
+  bigorder: {
+    name: '大单资金', freq: '实时(有变化推送)',
+    desc: '大单交易明细，监控大资金动向。',
+    topFields: 'code|代码,startSeq|起始序号,rowCount|本次条数,activeBuy|主动买入,passiveBuy|被动买入,activeSell|主动卖出,passiveSell|被动卖出',
+    subFields: 'rows[].seq|序号,rows[].t|时间,rows[].amt|金额(万),rows[].v|手数,rows[].avgP|均价(分),rows[].d|方向(66=B买/83=S卖),rows[].act|主动(1=主动)',
+    sample: '{"type":"bigorder","data":{"code":"SZ300773","activeBuy":5000,"passiveBuy":3000,"activeSell":2000,"passiveSell":1000,"startSeq":100,"rowCount":20,"rows":[{"seq":100,"t":145945,"amt":500,"v":100,"avgP":2650,"d":66,"act":1}]}}'
+  },
+};
+function updateWSRef() {
+  var wsPath = _wsPath;
+  var typ = document.getElementById('wsType').value;
+  var refMap = (wsPath === '/d201') ? _l2Ref : (wsPath === '/d101') ? _l1Ref : (wsPath === '/d202') ? _d202Ref : null;
+  if (!refMap) return;
+  var r = refMap[typ]; if (!r) return;
+  var sec = document.getElementById('sampleSection');
+  sec.style.display = '';
+  document.getElementById('sampleTitle').textContent = r.name + ' — 响应参考说明';
+  if (wsPath === '/d101') {
+    // d101 simple format: just description + examples
+    var h = '<div style="margin-bottom:6px"><b style="color:#e94560">' + r.name + '</b> <span style="color:#aaa">推送频率: ' + r.freq + '</span></div>';
+    h += '<div style="margin-bottom:8px;color:#aaa">' + r.desc + '</div>';
+    h += '<div style="margin-top:8px;color:#888">命令示例:</div>';
+    h += '<div style="color:#aaa;word-break:break-all;font-size:10px;margin-bottom:6px">' + r.cmdSample + '</div>';
+    h += '<div style="color:#888">响应示例:</div>';
+    h += '<div style="color:#aaa;word-break:break-all;font-size:10px">' + r.respSample + '</div>';
+    document.getElementById('sampleBody').innerHTML = h;
+    return;
+  }
+  var h = '<div style="margin-bottom:6px"><b style="color:#e94560">' + r.name + '</b> <span style="color:#aaa">推送频率: ' + r.freq + '</span></div>';
+  h += '<div style="margin-bottom:8px;color:#aaa">' + r.desc + '</div>';
+  h += '<table style="width:100%;border-collapse:collapse;font-size:10px">';
+  h += '<tr style="color:#e94560"><th style="text-align:left;padding:2px 4px;border-bottom:1px solid #1a3a5e">顶层字段</th><th style="text-align:left;padding:2px 4px;border-bottom:1px solid #1a3a5e">说明</th></tr>';
+  r.topFields.split(',').forEach(function(f, i){ var p=f.split('|'); h += '<tr style="'+(i%2?'background:#0d1d30':'')+'"><td style="padding:2px 4px"><code>'+p[0]+'</code></td><td style="padding:2px 4px;color:#aaa">'+p[1]+'</td></tr>'; });
+  h += '</table>';
+  if (r.subFields) {
+    h += '<table style="width:100%;border-collapse:collapse;font-size:10px;margin-top:8px">';
+    h += '<tr style="color:#e94560"><th style="text-align:left;padding:2px 4px;border-bottom:1px solid #1a3a5e">'+(r.subTitle||'记录字段')+'</th><th style="text-align:left;padding:2px 4px;border-bottom:1px solid #1a3a5e">说明</th></tr>';
+    r.subFields.split(',').forEach(function(f, i){ var p=f.split('|'); h += '<tr style="'+(i%2?'background:#0d1d30':'')+'"><td style="padding:2px 4px"><code>'+p[0]+'</code></td><td style="padding:2px 4px;color:#aaa">'+p[1]+'</td></tr>'; });
+    h += '</table>';
+  }
+  if (r.subFields2) {
+    h += '<div style="margin:8px 0 4px;color:#888;font-size:10px"><b>' + r.subFields2 + '</b></div>';
+  }
+  if (r.statusCodes) {
+    h += '<table style="width:100%;border-collapse:collapse;font-size:10px;margin-top:8px">';
+    h += '<tr style="color:#e94560"><th style="text-align:left;padding:2px 4px;border-bottom:1px solid #1a3a5e">status</th><th style="text-align:left;padding:2px 4px;border-bottom:1px solid #1a3a5e">分类</th><th style="text-align:left;padding:2px 4px;border-bottom:1px solid #1a3a5e">含义</th></tr>';
+    h += '<tr><td style="padding:2px 4px"><code>0</code></td><td style="padding:2px 4px;color:#aaa">闲置</td><td style="padding:2px 4px;color:#aaa">排队中/无变化</td></tr>';
+    h += '<tr style="background:#0d1d30"><td style="padding:2px 4px"><code>4,12,64,192</code></td><td style="padding:2px 4px;color:#27ae60">新增</td><td style="padding:2px 4px;color:#aaa">新委托进入队列</td></tr>';
+    h += '<tr><td style="padding:2px 4px"><code>1,9,16,128,144</code></td><td style="padding:2px 4px;color:#3498db">成交</td><td style="padding:2px 4px;color:#aaa">部分成交后剩余</td></tr>';
+    h += '<tr style="background:#0d1d30"><td style="padding:2px 4px"><code>2,32</code></td><td style="padding:2px 4px;color:#e94560">撤单</td><td style="padding:2px 4px;color:#aaa">撤单后剩余</td></tr>';
+    h += '</table>';
+    h += '<div style="margin-top:4px;color:#666;font-size:9px">注: 状态值可能是位标志组合，精确编码规律待确认</div>';
+  }
+  h += '<div style="margin-top:8px;color:#888">响应消息格式 (服务器推送):</div>';
+  h += '<div style="color:#aaa;font-size:10px;margin-bottom:4px">每条WS消息含 <code>list</code> 数组，可同时推送多个类型的数据：</div>';
+  h += '<div style="color:#aaa;word-break:break-all;font-size:10px;background:#0d1d30;padding:4px;border-radius:3px">{"list":[' + r.sample + '],"ts": ...}</div>';
+  document.getElementById('sampleBody').innerHTML = h;
+}
+function showWSPanel() {
+  var httpActions = document.getElementById('legacyHttpActions');
+  if (httpActions) httpActions.style.display = 'none';
+  var wsBodyBtns = document.getElementById('wsBodyBtns');
+  if (wsBodyBtns) wsBodyBtns.style.display = 'flex';
+  var bh = document.getElementById('wsBatchHint'); if (bh) bh.style.display = '';
+}
+function hideWSPanel() {
+  var httpActions = document.getElementById('legacyHttpActions');
+  if (httpActions) httpActions.style.display = 'flex';
+  var wsBodyBtns = document.getElementById('wsBodyBtns');
+  if (wsBodyBtns) wsBodyBtns.style.display = 'none';
+  if (typeof wsCloseAll === 'function') wsCloseAll();
+  var sf = document.getElementById('sampleSection'); if (sf) sf.style.display = 'none';
+  var bh = document.getElementById('wsBatchHint'); if (bh) bh.style.display = 'none';
+}
+var _pythonExampleText = '';
+var _pythonExampleFileName = '';
+var _pythonExampleCache = {};
+function openPythonExample() {
+  var modal = document.getElementById('pyModal');
+  var code = document.getElementById('pyCode');
+  var note = document.getElementById('pyNote');
+  var title = document.getElementById('pyModalTitle');
+  var download = document.getElementById('pyDownload');
+  var isD201 = _wsPath === '/d201';
+  var resource = isD201 ? 'downloads/examples/d201_buysell_batch_repro.py' : 'downloads/examples/d202_snapshot_auction.py';
+  var fileName = isD201 ? 'd201_buysell_batch_repro.py' : 'd202_snapshot_auction.py';
+  var modalTitle = isD201 ? 'D201 多股票 buysell Python 示例' : 'D202 全市场快照 Python 测试脚本';
+  var helpText = isD201
+    ? '示例为每只股票建立一个 WebSocket 连接，遍历每条消息的 list，并按 data.code 保存最新盘口。复制后保存为 d201_buysell_batch_repro.py，也可以直接下载脚本。'
+    : '示例默认在 09:25:07 获取早盘竞价快照；服务端固定截止 09:25:06，不支持全天回溯。可直接下载 d202_snapshot_auction.py 运行。';
+  title.textContent = modalTitle;
+  download.href = resource;
+  download.download = fileName;
+  _pythonExampleFileName = fileName;
+  modal.style.display = 'flex';
+  if (_pythonExampleCache[resource]) {
+    _pythonExampleText = _pythonExampleCache[resource];
+    code.textContent = _pythonExampleText;
+    note.textContent = helpText;
+    return;
+  }
+  code.textContent = '正在加载 Python 示例……';
+  note.textContent = '正在从当前网页加载脚本，请稍候。';
+  fetch(resource + '?v=' + WEB_VERSION)
+    .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
+    .then(function(text) {
+      _pythonExampleCache[resource] = text;
+      _pythonExampleText = text;
+      code.textContent = text;
+      note.textContent = helpText;
+    })
+    .catch(function(err) {
+      code.textContent = '脚本加载失败，请点击“下载 TXT”重试，或联系技术支持。\n\n' + err;
+      note.textContent = '未能加载网页内脚本。';
+    });
+}
+function closePythonExample() { document.getElementById('pyModal').style.display = 'none'; }
+function copyPythonExample() {
+  if (!_pythonExampleText) { alert('脚本尚未加载完成，请稍候再试'); return; }
+  var copied = function() { document.getElementById('pyNote').textContent = '已复制全部 Python 脚本，可粘贴保存为 ' + _pythonExampleFileName + '。'; };
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(_pythonExampleText).then(copied).catch(function() { copyPythonFallback(copied); });
+  } else {
+    copyPythonFallback(copied);
+  }
+}
+function copyPythonFallback(done) {
+  var area = document.createElement('textarea');
+  area.value = _pythonExampleText;
+  area.style.position = 'fixed'; area.style.opacity = '0';
+  document.body.appendChild(area); area.focus(); area.select();
+  try { if (document.execCommand('copy')) done(); else alert('复制失败，请手动选中代码复制'); }
+  finally { document.body.removeChild(area); }
+}
+function wsCurrentId() { return _wsPath === '/d101' ? '1' : (_wsPath === '/d201' ? '2' : (_wsPath === '/d202' ? '3' : '')); }
+function wsCloseAll() {
+  if (_ws1) { try { _ws1.close(); } catch (_) {} _ws1 = null; }
+  if (_ws2) { try { _ws2.close(); } catch (_) {} _ws2 = null; }
+  if (_ws3) { try { _ws3.close(); } catch (_) {} _ws3 = null; }
+}
+function wsConnectCurrent() { var id = wsCurrentId(); if (id) wsConnect(_wsPath, id); }
+function wsDisconnectCurrent() {
+  var id = wsCurrentId();
+  if (id === '1' && _ws1) _ws1.close();
+  else if (id === '2' && _ws2) _ws2.close();
+  else if (id === '3' && _ws3) _ws3.close();
+}
+function wsConnect(path, id) {
+  wsCloseAll();
+  var viewPath = path;
+  var cntEl = document.getElementById('wsLocalCount');
+  var stEl = document.getElementById('wsLocalStatus');
+  var btnC = document.getElementById('wsLocalConnect');
+  var btnD = document.getElementById('wsLocalDisconnect');
+  if (!cntEl || !stEl || !btnC || !btnD) return;
+  var addressInput = document.getElementById('legacyRequestUrl');
+  var url = addressInput ? addressInput.value.trim() : '';
+  if (!url) { stEl.textContent = '地址为空'; return; }
+  url = url.replace(/^http:/, 'ws:').replace(/^https:/, 'wss:');
+  cntEl.textContent = '0';
+  stEl.textContent = '连接中...';
+  stEl.style.color = '#e67e22';
+  document.getElementById('responseBody').innerHTML = '';
+  var ws = new WebSocket(url);
+  if (id === '1') _ws1 = ws; else if (id === '2') _ws2 = ws; else _ws3 = ws;
+  var cnt = 0;
+  ws.onopen = function() {
+    if (_wsPath !== viewPath) return;
+    stEl.textContent = '已连接';
+    stEl.style.color = '#27ae60';
+    btnC.style.display = 'none';
+    btnD.style.display = '';
+  };
+  ws.onmessage = function(e) {
+    if (_wsPath !== viewPath) return;
+    cnt++;
+    cntEl.textContent = cnt;
+    var resp = document.getElementById('responseBody');
+    if (!resp) return;
+    var line = document.createElement('div');
+    line.style.borderBottom = '1px solid #0f346033';
+    line.style.padding = '2px 0';
+    try { line.innerHTML = '<span style="color:#555;font-size:9px">[' + new Date().toLocaleTimeString() + ']</span> ' + highlightJson(e.data); } catch(ex) { line.textContent = e.data; }
+    resp.insertBefore(line, resp.firstChild);
+    if (resp.childElementCount > 500) resp.removeChild(resp.lastChild);
+  };
+  ws.onclose = function() {
+    if (_wsPath === viewPath) {
+      stEl.textContent = '已断开';
+      stEl.style.color = '#c0392b';
+      btnC.style.display = '';
+      btnD.style.display = 'none';
+    }
+    if (id === '1' && _ws1 === ws) _ws1 = null;
+    else if (id === '2' && _ws2 === ws) _ws2 = null;
+    else if (id === '3' && _ws3 === ws) _ws3 = null;
+  };
+  ws.onerror = function() {
+    if (_wsPath !== viewPath) return;
+    stEl.textContent = '连接失败';
+    stEl.style.color = '#c0392b';
+  };
+}
+function wsSendCmd() {
+  var active = _wsPath === '/d101' ? _ws1 : (_wsPath === '/d201' ? _ws2 : (_wsPath === '/d202' ? _ws3 : null));
+  if (!active || active.readyState !== 1) { alert('当前线路未连接，请先点连接按钮'); return; }
+  var text = document.getElementById('rawBody').value.trim();
+  if (!text) { alert('命令不能为空'); return; }
+  var obj;
+  try { obj = JSON.parse(text); } catch(e) { alert('非法JSON'); return; }
+  // 单对象保持单对象发送；只有用户明确输入数组时才发送命令数组。
+  // D101 默认是一条命令，避免客户端无意义地制造“多命令”外观。
+  var commands = Array.isArray(obj) ? obj : [obj];
+  if (_wsPath === '/d202') {
+    commands.forEach(function(command) {
+      if (command && typeof command === 'object' && command.type === 'snapshot') {
+        command.startSeq = 1;
+        command.cutoffTime = D202_SNAPSHOT_CUTOFF_TIME;
+      }
+    });
+  }
+  active.send(JSON.stringify(obj));
+}
+function wsClearLog() {
+  var localCount = document.getElementById('wsLocalCount');
+  if (localCount) localCount.textContent = '0';
+  document.getElementById('responseBody').innerHTML = '';
+}
+init();
+
+// ── 反馈 ──
+var _fbMethod = '', _fbPath = '';
+function openFeedback() {
+  var api = currentApi;
+  if (!api) {
+    if (_wsPath === '/d202') {
+    var cmd = {};
+    cmd.type = document.getElementById('wsType').value;
+    if (cmd.type !== 'snapshot') cmd.code = (document.getElementById('wsCode').value||'').trim();
+    cmd.enable = parseInt(document.getElementById('wsEnable').value);
+    var up = (document.getElementById('wsUserParamD202').value||'').trim();
+    if (up) cmd.userParam = parseInt(up);
+    var typ = cmd.type;
+    wsShow('d202RowCode', typ !== 'snapshot');
+    wsShow('d202RowLevels', typ === 'thousand' || typ === 'snapshot');
+    wsShow('d202RowCount', typ === 'entrust' || typ === 'trade' || typ === 'bigorder' || typ === 'snapshot');
+    wsShow('d202RowStartSeq', typ === 'entrust' || typ === 'trade' || typ === 'bigorder');
+    wsShow('d202RowWorkers', typ === 'snapshot');
+    wsShow('d202RowLimit', typ === 'snapshot');
+    wsShow('d202RowFilter', typ === 'entrust' || typ === 'snapshot');
+    wsShow('d202RowDir', typ === 'queue');
+    wsShow('d202RowLevel', typ === 'queue');
+    if (typ === 'thousand' || typ === 'snapshot') {
+      cmd.levels = parseInt(document.getElementById('wsLevels').value) || 10;
+    }
+    if (typ === 'entrust' || typ === 'trade' || typ === 'bigorder' || typ === 'snapshot') {
+      cmd.count = parseInt(document.getElementById('wsCount').value) || 50;
+    }
+    if (typ === 'entrust' || typ === 'snapshot') {
+      cmd.filter = parseInt(document.getElementById('wsFilter').value) || 0;
+    }
+    var ss = (document.getElementById('wsStartSeq').value||'').trim();
+    if (ss && (typ === 'entrust' || typ === 'trade' || typ === 'bigorder')) cmd.startSeq = parseInt(ss) || 0;
+    if (typ === 'snapshot') {
+      cmd.startSeq = 1;
+      cmd.cutoffTime = enforceD202CutoffTime();
+      cmd.workers = parseInt(document.getElementById('wsWorkers').value) || 8;
+      cmd.limit = Math.max(0, parseInt(document.getElementById('wsLimit').value) || 0);
+    }
+    if (typ === 'queue') {
+      cmd.dir = (document.getElementById('wsDir').value||'B').trim();
+      cmd.level = parseInt(document.getElementById('wsLevel').value) || 0;
+    }
+    document.getElementById('rawBody').value = JSON.stringify(cmd);
+    updateWSRef();
+    return;
+  }
+  if (_wsPath === '/d201') { _fbMethod = 'd201'; _fbPath = '/d201'; }
+    else if (_wsPath === '/d101') { _fbMethod = 'd101'; _fbPath = '/d101'; }
+    else { alert('请先选择接口'); return; }
+  } else {
+    _fbMethod = (api.name_cn || api.name_en || '');
+    _fbPath = (api.host_var || '') + ' ' + (api.path || '');
+  }
+  document.getElementById('fbApi').textContent = _fbPath + ' ' + _fbMethod;
+  document.getElementById('fbMsg').value = '';
+  document.getElementById('fbModal').style.display = 'flex';
+}
+function closeFeedback() { document.getElementById('fbModal').style.display = 'none'; }
+function submitFeedback() {
+  var msg = document.getElementById('fbMsg').value.trim();
+  if (!msg) { alert('请填写反馈内容'); return; }
+  var url = window.workspaceBaseUrl ? window.workspaceBaseUrl().replace(/:\d+$/, ':9527') : 'http://127.0.0.1:9527';
+  fetch(url + '/api/feedback', { method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8'},
+    body: new URLSearchParams({ method: _fbMethod, path: _fbPath, message: msg })
+  }).then(function(r){ return r.json(); })
+  .then(function(d){
+    if (d.code === 200) { alert('反馈已提交，谢谢！'); closeFeedback(); }
+    else { alert('提交失败(code=' + (d.code||'?') + ')，请先登录'); }
+  }).catch(function(){ alert('提交失败，请检查网络'); });
+}
+</script>
+<div id="pyModal" class="py-modal" onclick="if(event.target===this) closePythonExample()">
+<div class="py-modal-card">
+<div class="py-modal-head">
+  <span id="pyModalTitle">D202 全市场快照 Python 测试脚本</span>
+  <div class="py-modal-actions">
+    <button onclick="copyPythonExample()">复制脚本</button>
+    <a id="pyDownload" href="downloads/examples/d202_snapshot_auction.py" download="d202_snapshot_auction.py">下载脚本</a>
+    <button class="py-close" onclick="closePythonExample()">关闭</button>
+  </div>
+</div>
+<div class="py-modal-note" id="pyNote">脚本将从当前网页加载。默认在 09:25:07 获取早盘竞价快照；服务端固定截止 09:25:06，不支持全天回溯。可直接下载 <code>d202_snapshot_auction.py</code> 运行。</div>
+<pre class="py-code" id="pyCode">点击“Python示例”后加载脚本……</pre>
+</div>
+</div>
+<div id="uiGalleryLightbox" class="ui-gallery-lightbox" hidden aria-hidden="true">
+  <div class="ui-gallery-lightbox-card" role="dialog" aria-modal="true" aria-labelledby="uiGalleryLightboxTitle">
+    <div class="ui-gallery-lightbox-head"><span id="uiGalleryLightboxCode">D1</span><strong id="uiGalleryLightboxTitle">示例应用画面</strong><button type="button" id="uiGalleryLightboxClose">关闭 ×</button></div>
+    <div class="ui-gallery-lightbox-image"><img id="uiGalleryLightboxImage" src="" alt=""></div>
+    <div class="ui-gallery-lightbox-foot"><strong id="uiGalleryLightboxNote">基于 data_interface 构建 · 中文名称已掩码</strong><span>ESC 关闭</span></div>
+  </div>
+</div>
+<div id="fbModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);z-index:9999;justify-content:center;align-items:center">
+<div style="background:#1a1a2e;border:1px solid #e94560;border-radius:8px;padding:16px;width:360px;max-width:90vw">
+<div style="color:#e94560;font-weight:bold;margin-bottom:8px">反馈问题</div>
+<div style="font-size:10px;color:#888;margin-bottom:4px">接口: <span id="fbApi" style="color:#ccc"></span></div>
+<textarea id="fbMsg" placeholder="描述问题: 接口无返回 / 字段不对 / ..." style="width:100%;height:80px;background:#111;border:1px solid #333;color:#ccc;padding:6px;font-size:11px;resize:vertical"></textarea>
+<div style="margin-top:8px;display:flex;gap:6px;justify-content:flex-end">
+<button onclick="closeFeedback()" style="background:#333;border:1px solid #555;color:#ccc;padding:4px 12px;cursor:pointer;border-radius:3px;font-size:11px">取消</button>
+<button onclick="submitFeedback()" style="background:#e94560;border:none;color:#fff;padding:4px 12px;cursor:pointer;border-radius:3px;font-size:11px">提交</button>
+</div>
+</div>
+</div>
+<script src="assets/js/market_workspace.js?v=20260902-d6-status-2"></script>
+<script src="assets/js/ui_gallery.js?v=20260906-ui-gallery-1"></script>
+</body>
+</html>

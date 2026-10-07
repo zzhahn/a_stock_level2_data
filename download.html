@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b1120">
+<meta name="description" content="达塔接口程序、文档和代码示例下载中心，提供文件大小与 SHA-256 校验值。">
+<link rel="canonical" href="https://datas.lovestoblog.com/">
+<link rel="icon" href="favicon.svg?v=73" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/design-tokens.css?v=20260902-download-4">
+<link rel="stylesheet" href="assets/css/site-shell.css?v=20260902-download-4">
+<link rel="stylesheet" href="assets/css/download.css?v=20260902-download-6">
+<link rel="stylesheet" href="assets/css/disclaimer.css?v=20260907-disclaimer-1">
+<title>下载中心 | 达塔接口</title>
+</head>
+<body class="site-page site-page--content site-page--download">
+<div class="site-disclaimer" role="note" aria-label="免责声明"><span class="site-disclaimer-title">免责声明</span><span class="site-disclaimer-text">本网站及其中的数据、图表、程序与示例仅供学习、研究和技术交流使用，不构成任何投资建议、交易建议或收益承诺，不应作为买卖、持仓或其他投资决策的依据。市场有风险，投资需谨慎。</span></div>
+<header class="download-topbar site-header">
+  <a class="site-brand" href="index.html" aria-label="返回工作台">
+    <img class="site-brand-mark" src="favicon.svg?v=73" alt="" aria-hidden="true">
+    <span class="site-brand-name">达塔接口</span>
+  </a>
+  <nav class="site-nav" aria-label="下载中心导航">
+    <a class="site-nav-link is-active" href="#program" data-nav-filter="program" aria-current="page">程序</a>
+    <a class="site-nav-link" href="#docs" data-nav-filter="docs">文档</a>
+    <a class="site-nav-link" href="#examples" data-nav-filter="examples">示例</a>
+    <a class="site-nav-link" href="index.html">返回工作台</a>
+  </nav>
+</header>
+
+<main class="download-main">
+  <section class="download-head" aria-labelledby="downloadTitle">
+    <div>
+      <div class="download-eyebrow">DOWNLOAD CENTER · SHA-256</div>
+      <h1 id="downloadTitle">下载中心</h1>
+      <p>下载后对照 SHA-256 校验值，确认文件完整再运行。</p>
+    </div>
+    <div class="download-stats" aria-label="下载资源统计">
+      <div class="download-stat"><strong>5</strong><span>程序包</span></div>
+      <div class="download-stat"><strong>5</strong><span>文档</span></div>
+      <div class="download-stat"><strong>5</strong><span>示例</span></div>
+    </div>
+  </section>
+
+  <div class="download-toolbar">
+    <div class="download-filters" role="tablist" aria-label="资源分类">
+      <button class="download-filter is-active" type="button" role="tab" aria-selected="true" data-filter="all">全部 <span>15</span></button>
+      <button class="download-filter" type="button" role="tab" aria-selected="false" data-filter="program">程序 <span>5</span></button>
+      <button class="download-filter" type="button" role="tab" aria-selected="false" data-filter="docs">文档 <span>5</span></button>
+      <button class="download-filter" type="button" role="tab" aria-selected="false" data-filter="examples">示例 <span>5</span></button>
+    </div>
+    <div class="download-verify" aria-label="SHA-256 校验方法">
+      <span>Windows</span><code>certutil -hashfile &lt;文件&gt; SHA256</code>
+      <span>macOS / Linux</span><code>sha256sum &lt;文件&gt;</code>
+      <a href="downloads/SHA256SUMS.txt" download="SHA256SUMS.txt">校验清单 ↗</a>
+    </div>
+  </div>
+
+  <section class="download-resource-area" aria-label="下载资源">
+    <div class="download-resource-grid" id="downloadGrid">
+      <article class="download-resource" id="program" data-group="program">
+        <div class="resource-type"><span>Windows</span><small>程序 · AMD64</small></div>
+        <div class="resource-main">
+          <div class="resource-file"><code>data_interface_win_amd64.zip</code><span class="resource-size" title="5.73 MiB">5.73 MiB</span></div>
+          <div class="resource-note">Windows 桌面客户端，解压后运行 data_interface.exe，适合大多数电脑</div>
+          <div class="resource-hash"><span class="resource-hash-label">SHA-256</span><code id="hash-win">7bd74b041f2d04640b8ccba55ccc12328fe1ea64ee3f9fbaffae59624c9f649b</code><button class="resource-copy" type="button" data-copy-hash="hash-win">复制</button></div>
+        </div>
+        <a class="resource-download" href="downloads/programs/data_interface_win_amd64.zip" download="data_interface_win_amd64.zip">下载</a>
+      </article>
+      <article class="download-resource" data-group="program">
+        <div class="resource-type"><span>macOS</span><small>桌面 · ARM64</small></div>
+        <div class="resource-main">
+          <div class="resource-file"><code>data_interface_macos_arm64.dmg</code><span class="resource-size" title="6.18 MiB">6.18 MiB</span></div>
+          <div class="resource-note">ARM64 (M系列芯片) 桌面客户端，打开 DMG 后拖入“应用程序”</div>
+          <div class="resource-hash"><span class="resource-hash-label">SHA-256</span><code id="hash-macos">f6a1f200e80cc087c1a68fffb465d45fbb37ade8ef8e6e163a3e6f74ffc308bc</code><button class="resource-copy" type="button" data-copy-hash="hash-macos">复制</button></div>
+        </div>
+        <a class="resource-download" href="downloads/programs/data_interface_macos_arm64.dmg" download="data_interface_macos_arm64.dmg">下载</a>
+      </article>
+      <article class="download-resource" data-group="program">
+        <div class="resource-type"><span>macOS</span><small>桌面 · Intel x86_64</small></div>
+        <div class="resource-main">
+          <div class="resource-file"><code>data_interface_macos_x86_64.dmg</code><span class="resource-size" title="6.25 MiB">6.25 MiB</span></div>
+          <div class="resource-note">Intel 芯片桌面客户端，打开 DMG 后拖入“应用程序”</div>
+          <div class="resource-hash"><span class="resource-hash-label">SHA-256</span><code id="hash-macos-intel">4734409693cfeefa502ee59df8c0c9d00f63e3ac38ebefb2eed93405ffd1a755</code><button class="resource-copy" type="button" data-copy-hash="hash-macos-intel">复制</button></div>
+        </div>
+        <a class="resource-download" href="downloads/programs/data_interface_macos_x86_64.dmg" download="data_interface_macos_x86_64.dmg">下载</a>
+      </article>
+      <article class="download-resource" data-group="program">
+        <div class="resource-type"><span>Linux 桌面</span><small>程序 · AMD64</small></div>
+        <div class="resource-main">
+          <div class="resource-file"><code>data_interface_linux_amd64.tar.gz</code><span class="resource-size" title="5.78 MiB">5.78 MiB</span></div>
+          <div class="resource-note">Linux 桌面客户端，需桌面环境，解压并赋予执行权限后运行</div>
+          <div class="resource-hash"><span class="resource-hash-label">SHA-256</span><code id="hash-linux">22cbbdd54eb925af6628e3b5f78692afd80a4ca6e9aff16d2639bf991a3ce941</code><button class="resource-copy" type="button" data-copy-hash="hash-linux">复制</button></div>
+        </div>
+        <a class="resource-download" href="downloads/programs/data_interface_linux_amd64.tar.gz" download="data_interface_linux_amd64.tar.gz">下载</a>
+      </article>
+      <article class="download-resource" data-group="program">
+        <div class="resource-type"><span>Linux 服务器</span><small>无界面 · AMD64</small></div>
+        <div class="resource-main">
+          <div class="resource-file"><code>data_interface_linux_amd64_headless.tar.gz</code><span class="resource-size" title="5.74 MiB">5.74 MiB</span></div>
+          <div class="resource-note">Linux 无界面服务器版，不依赖桌面环境，适合后台进程管理</div>
+          <div class="resource-hash"><span class="resource-hash-label">SHA-256</span><code id="hash-linux-headless">1407e2a52e3df3f6e19f48ab596175082373aeea4642bbfeb522e794b1096679</code><button class="resource-copy" type="button" data-copy-hash="hash-linux-headless">复制</button></div>
+        </div>
+        <a class="resource-download" href="downloads/programs/data_interface_linux_amd64_headless.tar.gz" download="data_interface_linux_amd64_headless.tar.gz">下载</a>
+      </article>
+
+      <article class="download-resource" id="docs" data-group="docs">
+        <div class="resource-type"><span>快速开始</span><small>文档</small></div>
+        <div class="resource-main">
+          <div class="resource-file"><code>三平台安装启动与自测.md</code><span class="resource-size" title="13.16 KiB">13.16 KiB</span></div>
+          <div class="resource-note">Windows、macOS、Linux 安装、登录与连通性自测</div>
+          <div class="resource-hash"><span class="resource-hash-label">SHA-256</span><code id="hash-doc-start">179efde02e6484bdb389762754e922fac6de599ade4ae524821a84d3cc17f6b7</code><button class="resource-copy" type="button" data-copy-hash="hash-doc-start">复制</button></div>
+        </div>
+        <a class="resource-download" href="downloads/docs/三平台安装启动与自测.md" download="三平台安装启动与自测.md">下载</a>
+      </article>
+      <article class="download-resource" data-group="docs">
+        <div class="resource-type"><span>D101</span><small>字段参考</small></div>
+        <div class="resource-main">
+          <div class="resource-file"><code>d101_fields.md</code><span class="resource-size" title="29.64 KiB">29.64 KiB</span></div>
+          <div class="resource-note">203 个正式行情字段的规范名称、中文含义和换算说明</div>
+          <div class="resource-hash"><span class="resource-hash-label">SHA-256</span><code id="hash-doc-d101-fields">7a04ec36acff00471d1f034259656d47061d5d312f9d0a26304167eb8a096aec</code><button class="resource-copy" type="button" data-copy-hash="hash-doc-d101-fields">复制</button></div>
+        </div>
+        <a class="resource-download" href="downloads/docs/d101_fields.md" download="d101_fields.md">下载</a>
+      </article>
+      <article class="download-resource" data-group="docs">
+        <div class="resource-type"><span>服务器</span><small>文档</small></div>
+        <div class="resource-main">
+          <div class="resource-file"><code>无界面服务器与AI自动化操作.md</code><span class="resource-size" title="13.81 KiB">13.81 KiB</span></div>
+          <div class="resource-note">无浏览器时用 API / Python 完成登录、充值、启动、停止和自测</div>
+          <div class="resource-hash"><span class="resource-hash-label">SHA-256</span><code id="hash-doc-headless">3450d1bb9261e874d6b39584bd40fcc8aa8fdbf606d686f78cbda7a377c9ff23</code><button class="resource-copy" type="button" data-copy-hash="hash-doc-headless">复制</button></div>
+        </div>
+        <a class="resource-download" href="downloads/docs/无界面服务器与AI自动化操作.md" download="无界面服务器与AI自动化操作.md">下载</a>
+      </article>
+      <article class="download-resource" data-group="docs">
+        <div class="resource-type"><span>完整参考</span><small>文档</small></div>
+        <div class="resource-main">
+          <div class="resource-file"><code>用户文档合集.zip</code><span class="resource-size" title="156.28 KiB">156.28 KiB</span></div>
+          <div class="resource-note">包含快速开始、服务器操作、HTTP、WebSocket 与完整 D101 字段参考</div>
+          <div class="resource-hash"><span class="resource-hash-label">SHA-256</span><code id="hash-doc-all">4e81352a92a282d6ab1be065077c18bd445bcafbfa11e35f0f3f2f6b37a6521a</code><button class="resource-copy" type="button" data-copy-hash="hash-doc-all">复制</button></div>
+        </div>
+        <a class="resource-download" href="downloads/docs/用户文档合集.zip" download="用户文档合集.zip">下载</a>
+      </article>
+      <article class="download-resource" data-group="docs">
+        <div class="resource-type"><span>macOS</span><small>补充文档</small></div>
+        <div class="resource-main">
+          <div class="resource-file"><code>mac启动教程.txt</code><span class="resource-size" title="13.13 KiB">13.13 KiB</span></div>
+          <div class="resource-note">macOS 首次启动安全确认、应用位置和后台运行说明</div>
+          <div class="resource-hash"><span class="resource-hash-label">SHA-256</span><code id="hash-doc-mac">dba4ee32d3537953bb14e3f6b97c6c853696a921c8f3f4d4676630eb72687ae9</code><button class="resource-copy" type="button" data-copy-hash="hash-doc-mac">复制</button></div>
+        </div>
+        <a class="resource-download" href="downloads/docs/mac启动教程.txt" download="mac启动教程.txt">下载</a>
+      </article>
+
+      <article class="download-resource" id="examples" data-group="examples">
+        <div class="resource-type"><span>自动化</span><small>示例 · Python</small></div>
+        <div class="resource-main">
+          <div class="resource-file"><code>ai_control.py</code><span class="resource-size" title="6.07 KiB">6.07 KiB</span></div>
+          <div class="resource-note">标准库 Python 脚本：登录、充值、启动、停止和状态自测</div>
+          <div class="resource-hash"><span class="resource-hash-label">SHA-256</span><code id="hash-example-ai">2c1351f83a4042c4f79d7deb5bab16d28725644071d0f3e762aeb2fc9a45f17d</code><button class="resource-copy" type="button" data-copy-hash="hash-example-ai">复制</button></div>
+        </div>
+        <a class="resource-download" href="downloads/examples/ai_control.py" download="ai_control.py">下载</a>
+      </article>
+      <article class="download-resource" data-group="examples">
+        <div class="resource-type"><span>深度行情</span><small>示例 · Python</small></div>
+        <div class="resource-main">
+          <div class="resource-file"><code>d201_l2_csv.py</code><span class="resource-size" title="8.05 KiB">8.05 KiB</span></div>
+          <div class="resource-note">逐笔委托和逐笔成交采集到 CSV 的命令行示例</div>
+          <div class="resource-hash"><span class="resource-hash-label">SHA-256</span><code id="hash-example-batch">351b61ee58c1d9e70b6af5924b33fb9924725bd9b236b4626be4fa672f53c203</code><button class="resource-copy" type="button" data-copy-hash="hash-example-batch">复制</button></div>
+        </div>
+        <a class="resource-download" href="downloads/examples/d201_l2_csv.py" download="d201_l2_csv.py">下载</a>
+      </article>
+      <article class="download-resource" data-group="examples">
+        <div class="resource-type"><span>复现脚本</span><small>示例 · Python</small></div>
+        <div class="resource-main">
+          <div class="resource-file"><code>d201_buysell_batch_repro.py</code><span class="resource-size" title="9.95 KiB">9.95 KiB</span></div>
+          <div class="resource-note">批量盘口复现、消息遍历与结果校验脚本</div>
+          <div class="resource-hash"><span class="resource-hash-label">SHA-256</span><code id="hash-example-repro">2562b8cd92448abedd53b5eb9f39129600b3cdd5d96bd7688c7dc1ce02760382</code><button class="resource-copy" type="button" data-copy-hash="hash-example-repro">复制</button></div>
+        </div>
+        <a class="resource-download" href="downloads/examples/d201_buysell_batch_repro.py" download="d201_buysell_batch_repro.py">下载</a>
+      </article>
+      <article class="download-resource" data-group="examples">
+        <div class="resource-type"><span>全市场快照</span><small>示例 · Python</small></div>
+        <div class="resource-main">
+          <div class="resource-file"><code>d202_snapshot_auction.py</code><span class="resource-size" title="13.24 KiB">13.24 KiB</span></div>
+          <div class="resource-note">竞价快照测试、参数设置与 JSONL 输出示例</div>
+          <div class="resource-hash"><span class="resource-hash-label">SHA-256</span><code id="hash-example-snapshot">696a0d87139ab17a243d50bcd1dd845dabe16ee5e12b9270b813b57da9fde27c</code><button class="resource-copy" type="button" data-copy-hash="hash-example-snapshot">复制</button></div>
+        </div>
+        <a class="resource-download" href="downloads/examples/d202_snapshot_auction.py" download="d202_snapshot_auction.py">下载</a>
+      </article>
+      <article class="download-resource" data-group="examples">
+        <div class="resource-type"><span>完整示例</span><small>合集 · ZIP</small></div>
+        <div class="resource-main">
+          <div class="resource-file"><code>代码示例合集.zip</code><span class="resource-size" title="228.53 KiB">228.53 KiB</span></div>
+          <div class="resource-note">可单独运行的 Python 接入和测试示例合集</div>
+          <div class="resource-hash"><span class="resource-hash-label">SHA-256</span><code id="hash-example-all">bc45cff067c4937b5d570a7010d1c10b38b363c08f980016d517cd13eb22f785</code><button class="resource-copy" type="button" data-copy-hash="hash-example-all">复制</button></div>
+        </div>
+        <a class="resource-download" href="downloads/examples/代码示例合集.zip" download="代码示例合集.zip">下载</a>
+      </article>
+    </div>
+  </section>
+
+  <div class="download-steps" aria-label="下载后的使用步骤">
+    <div><b>01</b><span>下载对应文件</span></div>
+    <div><b>02</b><span>计算 SHA-256</span></div>
+    <div><b>03</b><span>对比后运行或阅读</span></div>
+  </div>
+
+  <footer class="download-footer site-footer">
+    <div>SHA-256 按当前下载目录计算；如果文件更新，请以页面最新校验值为准。</div>
+  </footer>
+</main>
+
+<script>
+(function () {
+  'use strict';
+  var filters = Array.prototype.slice.call(document.querySelectorAll('[data-filter]'));
+  var resources = Array.prototype.slice.call(document.querySelectorAll('.download-resource'));
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll('[data-nav-filter]'));
+  var activeFilter = 'all';
+
+  function applyFilter(filter) {
+    activeFilter = filter;
+    resources.forEach(function (resource) {
+      resource.hidden = filter !== 'all' && resource.dataset.group !== filter;
+    });
+    filters.forEach(function (button) {
+      var active = button.dataset.filter === filter;
+      button.classList.toggle('is-active', active);
+      button.setAttribute('aria-selected', active ? 'true' : 'false');
+    });
+    navLinks.forEach(function (link) {
+      link.classList.toggle('is-active', link.dataset.navFilter === filter);
+      if (filter === 'all') link.classList.remove('is-active');
+    });
+  }
+
+  filters.forEach(function (button) {
+    button.addEventListener('click', function () { applyFilter(button.dataset.filter); });
+  });
+  navLinks.forEach(function (link) {
+    link.addEventListener('click', function () { applyFilter(link.dataset.navFilter); });
+  });
+
+  function setCopied(button) {
+    var original = button.textContent;
+    button.textContent = '已复制';
+    button.classList.add('is-copied');
+    window.setTimeout(function () {
+      button.textContent = original;
+      button.classList.remove('is-copied');
+    }, 1400);
+  }
+  function fallbackCopy(value, button) {
+    var area = document.createElement('textarea');
+    area.value = value;
+    area.setAttribute('readonly', '');
+    area.style.position = 'fixed';
+    area.style.opacity = '0';
+    document.body.appendChild(area);
+    area.select();
+    try { document.execCommand('copy'); setCopied(button); } catch (error) { button.textContent = '请手动复制'; }
+    document.body.removeChild(area);
+  }
+  document.querySelectorAll('[data-copy-hash]').forEach(function (button) {
+    button.addEventListener('click', function () {
+      var target = document.getElementById(button.getAttribute('data-copy-hash'));
+      if (!target) return;
+      var value = target.textContent.trim();
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(value).then(function () { setCopied(button); }).catch(function () { fallbackCopy(value, button); });
+      } else {
+        fallbackCopy(value, button);
+      }
+    });
+  });
+
+  var mobileQuery = window.matchMedia('(max-width: 820px)');
+  applyFilter(mobileQuery.matches ? 'program' : activeFilter);
+  var handleViewportChange = function (event) { applyFilter(event.matches ? 'program' : 'all'); };
+  if (mobileQuery.addEventListener) mobileQuery.addEventListener('change', handleViewportChange);
+  else if (mobileQuery.addListener) mobileQuery.addListener(handleViewportChange);
+}());
+</script>
+</body>
+</html>

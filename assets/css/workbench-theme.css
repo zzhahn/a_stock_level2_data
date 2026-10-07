@@ -1,0 +1,522 @@
+/* 工作台与实时看板共用深色基底；数据方向色仍由页面语义单独控制。 */
+body.site-page--workbench {
+  background: var(--ui-bg);
+  color: var(--ui-text);
+  font-family: var(--ui-font-ui);
+}
+
+body.site-page--workbench .admin-bar {
+  position: relative;
+  z-index: 1000;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  background: var(--ui-surface);
+  border-bottom: 1px solid var(--ui-border);
+}
+
+/* 顶部横向滚动容器不能裁掉下载、帮助等跨出工具栏的浮层。 */
+body.site-page--workbench .admin-popover {
+  position: fixed !important;
+  top: var(--admin-popover-top, 40px) !important;
+  left: var(--admin-popover-left, 8px) !important;
+  right: auto !important;
+  z-index: 2000 !important;
+  box-sizing: border-box;
+  max-width: calc(100vw - 16px);
+  max-height: calc(100vh - 16px);
+  overflow: auto;
+}
+
+body.site-page--workbench .admin-bar > * {
+  flex-shrink: 0;
+}
+
+body.site-page--workbench #adminBar > span[style*="flex:1"] {
+  flex: 0 0 8px !important;
+}
+
+body.site-page--workbench .brand-text {
+  background: none;
+  color: var(--ui-brand-soft);
+  -webkit-text-fill-color: var(--ui-brand-soft);
+}
+
+body.site-page--workbench .app-nav-link {
+  flex: 0 0 auto;
+  min-height: 28px;
+  padding: 5px 8px;
+  border: 1px solid rgba(78, 201, 176, .34);
+  border-radius: var(--ui-radius-sm);
+  color: var(--ui-accent-strong);
+  font: 11px/1.2 var(--ui-font-ui);
+}
+
+body.site-page--workbench .app-nav-link:hover,
+body.site-page--workbench .app-nav-link:focus-visible {
+  background: rgba(78, 201, 176, .12);
+  border-color: var(--ui-accent);
+  color: #c7fff2;
+  outline: none;
+}
+
+body.site-page--workbench .admin-bar input {
+  background: var(--ui-surface-soft);
+  border-color: var(--ui-border);
+  color: var(--ui-text);
+  border-radius: var(--ui-radius-sm);
+}
+
+body.site-page--workbench .admin-bar input:focus,
+body.site-page--workbench .search-box input:focus {
+  border-color: var(--ui-accent);
+}
+
+body.site-page--workbench .admin-bar .btn {
+  min-height: 28px;
+  border: 1px solid transparent;
+  border-radius: var(--ui-radius-sm);
+}
+
+body.site-page--workbench .admin-bar .btn-auth {
+  background: var(--ui-action);
+  border-color: var(--ui-action);
+}
+
+body.site-page--workbench .admin-bar .btn-out,
+body.site-page--workbench .admin-bar .btn-stop {
+  background: rgba(255, 107, 122, .18);
+  border-color: rgba(255, 107, 122, .45);
+  color: #ffd9de;
+}
+
+body.site-page--workbench .admin-bar .btn-card {
+  background: rgba(240, 180, 91, .2);
+  border-color: rgba(240, 180, 91, .46);
+  color: #ffd991;
+}
+
+body.site-page--workbench .admin-bar .btn-start {
+  background: rgba(66, 211, 146, .18);
+  border-color: rgba(66, 211, 146, .46);
+  color: #a9f2ce;
+}
+
+body.site-page--workbench .admin-bar .btn-exit,
+body.site-page--workbench .admin-bar #btnAutostart,
+body.site-page--workbench .admin-bar #btnOpenWeb {
+  background: var(--ui-surface-soft);
+  border: 1px solid var(--ui-border);
+  color: var(--ui-muted);
+}
+
+/* 顶部操作栏沿用旧版工作区的高识别度配色，主体工作区继续使用新版主题。 */
+body.site-page--workbench .admin-bar {
+  background: #0f3460;
+  border-bottom-color: #0f3460;
+}
+
+body.site-page--workbench .admin-bar .sep {
+  background: #1a1a3e;
+}
+
+body.site-page--workbench .admin-bar input {
+  background: #1a1a2e;
+  border-color: #1a1a3e;
+  color: #e0e0e0;
+  border-radius: 3px;
+}
+
+body.site-page--workbench .admin-bar input:focus {
+  border-color: #e94560;
+}
+
+body.site-page--workbench .admin-bar .btn {
+  border-color: transparent;
+  border-radius: 3px;
+  color: #fff;
+}
+
+body.site-page--workbench .admin-bar .btn-auth {
+  background: #3377eb;
+  border-color: transparent;
+}
+
+body.site-page--workbench .admin-bar .btn-out,
+body.site-page--workbench .admin-bar .btn-stop {
+  background: #e53935;
+  border-color: transparent;
+  color: #fff;
+}
+
+body.site-page--workbench .admin-bar .btn-card {
+  background: #f59614;
+  border-color: transparent;
+  color: #fff;
+}
+
+body.site-page--workbench .admin-bar .btn-start {
+  background: #38a141;
+  border-color: transparent;
+  color: #fff;
+}
+
+body.site-page--workbench .admin-bar .btn-exit,
+body.site-page--workbench .admin-bar #btnExpire,
+body.site-page--workbench .admin-bar #btnAutostart,
+body.site-page--workbench .admin-bar #btnOpenWeb {
+  background: #444;
+  border-color: transparent;
+  color: #888;
+}
+
+body.site-page--workbench .sidebar {
+  background: var(--ui-bg-elevated);
+  border-right-color: var(--ui-border);
+}
+
+body.site-page--workbench .sidebar-header,
+body.site-page--workbench .api-bar,
+body.site-page--workbench .market-editor-head,
+body.site-page--workbench .market-response-head,
+body.site-page--workbench .sample-header,
+body.site-page--workbench .market-category-title {
+  background: var(--ui-surface);
+  border-color: var(--ui-border);
+}
+
+body.site-page--workbench .sidebar-header,
+body.site-page--workbench .market-editor-head,
+body.site-page--workbench .market-response-head,
+body.site-page--workbench .sample-header {
+  color: var(--ui-accent-strong);
+}
+
+body.site-page--workbench .search-box {
+  border-bottom-color: var(--ui-border);
+}
+
+body.site-page--workbench .search-box input,
+body.site-page--workbench .market-connection-row input,
+body.site-page--workbench .market-editor-scroll td input,
+body.site-page--workbench .market-editor-scroll td select,
+body.site-page--workbench .market-body textarea {
+  background: var(--ui-surface-soft);
+  border-color: var(--ui-border);
+  color: var(--ui-text);
+}
+
+body.site-page--workbench .product-nav-button,
+body.site-page--workbench .market-nav-button,
+body.site-page--workbench .market-all-button {
+  background: linear-gradient(90deg, rgba(110, 168, 254, .82), var(--ui-surface-soft)) !important;
+}
+
+body.site-page--workbench .product-nav-button.product-active,
+body.site-page--workbench .product-nav-button.market-active,
+body.site-page--workbench .market-nav-button.market-active,
+body.site-page--workbench .market-all-button.product-active {
+  background: linear-gradient(90deg, var(--ui-brand-action), #79273b) !important;
+}
+
+body.site-page--workbench .product-push {
+  background: linear-gradient(90deg, rgba(78, 201, 176, .26), var(--ui-surface)) !important;
+  border-color: rgba(78, 201, 176, .42);
+}
+
+body.site-page--workbench .product-nav-category-grid,
+body.site-page--workbench .market-layout,
+body.site-page--workbench .market-view {
+  background: var(--ui-bg);
+}
+
+body.site-page--workbench .market-editor,
+body.site-page--workbench .market-response,
+body.site-page--workbench .market-connection-row,
+body.site-page--workbench .market-description,
+body.site-page--workbench .market-body,
+body.site-page--workbench .market-actions,
+body.site-page--workbench .market-info,
+body.site-page--workbench .sample-body {
+  background: var(--ui-bg-elevated);
+  border-color: var(--ui-border);
+}
+
+body.site-page--workbench .api-bar .api-name,
+body.site-page--workbench .market-editor-scroll th,
+body.site-page--workbench .market-editor-scroll .ws-section-row th {
+  color: var(--ui-accent-strong);
+}
+
+body.site-page--workbench .api-bar .api-path,
+body.site-page--workbench .market-connection-label,
+body.site-page--workbench .market-connection-label code,
+body.site-page--workbench .market-editor-scroll th code,
+body.site-page--workbench .market-info code,
+body.site-page--workbench .market-response-tip code {
+  color: var(--ui-accent-strong);
+}
+
+body.site-page--workbench .api-bar .stat {
+  background: var(--ui-surface);
+}
+
+body.site-page--workbench .api-bar .stat b,
+body.site-page--workbench .market-status.bad,
+body.site-page--workbench .market-response pre.error {
+  color: var(--ui-danger);
+}
+
+body.site-page--workbench .market-status.ok {
+  color: var(--ui-success);
+}
+
+body.site-page--workbench .market-btn.primary {
+  background: var(--ui-action);
+}
+
+body.site-page--workbench .market-btn.green,
+body.site-page--workbench .btn-send {
+  background: var(--ui-brand-action);
+}
+
+body.site-page--workbench .market-response pre,
+body.site-page--workbench .sample-body {
+  color: var(--ui-text-soft);
+}
+
+body.site-page--workbench .method-gallery {
+  background: linear-gradient(145deg, var(--ui-surface) 0%, var(--ui-bg-elevated) 58%, var(--ui-bg) 100%);
+  border-left-color: rgba(78, 201, 176, .42);
+}
+
+body.site-page--workbench .method-gallery-head,
+body.site-page--workbench .method-gallery-toolbar {
+  border-color: var(--ui-border);
+}
+
+body.site-page--workbench .method-gallery-head {
+  background: radial-gradient(circle at 82% 0%, rgba(110, 168, 254, .2), transparent 34%), var(--ui-surface);
+}
+
+body.site-page--workbench .method-card {
+  background: linear-gradient(145deg, var(--ui-surface-strong), var(--ui-surface-soft));
+  border-color: rgba(128, 154, 198, .42);
+}
+
+body.site-page--workbench .method-card:hover {
+  border-color: var(--ui-accent);
+}
+
+/* L2 看板保留数据密度，只统一基底、控件、分栏和表头。 */
+body.site-page--dense {
+  background: var(--ui-bg);
+  color: var(--ui-text-soft);
+  font-family: var(--ui-font-mono);
+}
+
+body.site-page--dense .topbar {
+  min-height: 40px;
+  padding: 6px 14px;
+  background: var(--ui-surface);
+  border-bottom-color: var(--ui-border);
+}
+
+body.site-page--dense .topbar input {
+  background: var(--ui-surface-soft);
+  border-color: var(--ui-border);
+  border-radius: var(--ui-radius-sm);
+  color: var(--ui-text);
+}
+
+body.site-page--dense .topbar button {
+  padding: 5px 11px;
+  background: rgba(66, 211, 146, .16);
+  border: 1px solid rgba(66, 211, 146, .42);
+  border-radius: var(--ui-radius-sm);
+  color: #a9f2ce;
+}
+
+body.site-page--dense .topbar button.off {
+  background: rgba(255, 107, 122, .16);
+  border-color: rgba(255, 107, 122, .42);
+  color: #ffd9de;
+}
+
+body.site-page--dense .topbar button.subbed {
+  background: rgba(110, 168, 254, .18);
+  border-color: rgba(110, 168, 254, .48);
+  color: var(--ui-action-strong);
+}
+
+body.site-page--dense .main {
+  height: calc(100vh - 40px);
+}
+
+body.site-page--dense .col {
+  padding: 8px;
+  border-right-color: var(--ui-border);
+}
+
+body.site-page--dense .col h3 {
+  margin-bottom: 6px;
+  padding: 5px 7px;
+  background: var(--ui-surface);
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius-sm);
+  color: var(--ui-accent-strong);
+}
+
+body.site-page--dense .hq-row,
+body.site-page--dense .sp-summary {
+  background: var(--ui-surface);
+}
+
+body.site-page--dense .hq-row:hover {
+  background: var(--ui-surface-strong);
+}
+
+body.site-page--dense .hq-row.hq-hdr,
+body.site-page--dense .sp-item.sp-hdr,
+body.site-page--dense .flow-table th {
+  background: var(--ui-surface-soft);
+}
+
+body.site-page--dense .sp-item {
+  border-bottom-color: var(--ui-border);
+}
+
+body.site-page--dense .flow-table td {
+  border-bottom-color: rgba(38, 55, 82, .72);
+}
+
+body.site-page--dense .hq-row .price.buy,
+body.site-page--dense .sp-buy .v,
+body.site-page--dense .sp-buy .a,
+body.site-page--dense .flow-table .buy,
+body.site-page--dense .flow-table .px.buy,
+body.site-page--dense .flow-table .t-buy {
+  color: var(--ui-market-buy);
+}
+
+body.site-page--dense .hq-row .price.sell,
+body.site-page--dense .sp-sell .v,
+body.site-page--dense .sp-sell .a,
+body.site-page--dense .flow-table .sell,
+body.site-page--dense .flow-table .px.sell,
+body.site-page--dense .flow-table .t-sell {
+  color: var(--ui-market-sell);
+}
+
+.dense-site-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+  color: var(--ui-chrome-text);
+  font: 700 12px/1 var(--ui-font-ui);
+  letter-spacing: .04em;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.dense-site-brand img {
+  display: block;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+}
+
+.dense-site-brand:hover,
+.dense-site-brand:focus-visible {
+  color: var(--ui-chrome-accent);
+  outline: none;
+}
+
+.dense-topbar-divider {
+  width: 1px;
+  height: 20px;
+  flex: 0 0 1px;
+  background: var(--ui-border);
+}
+
+.dense-brand-code {
+  color: var(--ui-brand-soft);
+  font: 700 13px/1 var(--ui-font-mono);
+  letter-spacing: .04em;
+}
+
+.dense-brand-name {
+  color: var(--ui-text);
+  font: 12px/1 var(--ui-font-ui);
+}
+
+.dense-doc-link {
+  margin-right: 8px;
+  color: var(--ui-action-strong);
+  font: 11px/1 var(--ui-font-ui);
+  text-decoration: none;
+}
+
+.dense-doc-link:hover,
+.dense-doc-link:focus-visible {
+  color: var(--ui-accent-strong);
+  outline: none;
+}
+
+@media (max-width: 820px) {
+  body.site-page--dense .topbar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  body.site-page--dense .topbar > * {
+    flex-shrink: 0;
+  }
+
+  body.site-page--dense .main {
+    overflow: auto;
+  }
+
+  body.site-page--dense .col {
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: 560px) {
+  body.site-page--workbench .api-bar {
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 5px 8px;
+  }
+
+  body.site-page--workbench .api-bar .api-name {
+    flex: 1 1 auto;
+    min-width: 0;
+    white-space: nowrap;
+  }
+
+  body.site-page--workbench .api-bar .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(34px, 1fr));
+    flex: 1 1 100%;
+    justify-content: stretch;
+    width: 100%;
+    margin-left: 0;
+  }
+
+  body.site-page--workbench .api-bar .stat {
+    min-width: 0;
+    padding: 1px 2px;
+    font-size: 8px;
+    line-height: 1.25;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  body.site-page--workbench .api-bar .stat b {
+    display: block;
+    font-size: 9px;
+  }
+}

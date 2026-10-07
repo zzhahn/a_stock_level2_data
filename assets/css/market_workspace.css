@@ -1,0 +1,131 @@
+/* 统一产品导航和 d6 工作区的深色接口测试语言。 */
+.product-nav{padding:4px 10px 2px}
+.product-nav-latency{min-height:12px;margin-bottom:2px;text-align:center;color:#27ae60;font-size:9px;font-weight:bold}
+.product-nav-caption{padding:3px 2px 2px;color:#e94560;font-size:10px;font-weight:bold;letter-spacing:.3px}
+.product-nav-live{margin-top:3px;border-top:1px solid #0f3460}
+.product-nav-feature{display:flex;align-items:center;gap:5px;margin-top:0;padding:6px 4px 5px;color:#ffd45a;border-top:0;border-bottom:1px solid #6a5024;text-shadow:0 0 8px rgba(255,204,51,.3)}
+.product-nav-feature-icon{color:#ffcc33;font-size:12px;line-height:1}
+.product-nav-feature-badge{margin-left:auto;padding:1px 5px;border:1px solid #37c9a6;border-radius:2px;color:#8ff0d8;font:700 9px Consolas,monospace;letter-spacing:.4px}
+.product-nav-button{display:flex;align-items:center;gap:6px;width:100%;min-height:27px;margin:2px 0;padding:5px 8px;border:0;border-radius:3px;background:linear-gradient(90deg,#3377EB,#1a1a2e);color:#fff;font:11px "Microsoft YaHei",Arial,sans-serif;cursor:pointer;user-select:none;text-align:left;white-space:nowrap;overflow:hidden}
+.product-nav-button:hover{opacity:.9}
+.product-nav-button.product-active{background:linear-gradient(90deg,#e94560,#7f2336)}
+.product-nav-button.product-d6{background:linear-gradient(90deg,#3377EB,#1a1a2e)}
+.product-nav-button.product-d6.market-active{background:linear-gradient(90deg,#e94560,#7f2336)}
+.product-nav-icon{width:17px;text-align:center;font-size:13px;flex-shrink:0}
+.product-nav-code{width:34px;color:#b9d2ff;font:700 10px Consolas,monospace;flex-shrink:0}
+.product-nav-badge{margin-left:auto;color:#c8d7f2;font-size:9px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.product-nav-status{margin-left:4px;color:#9b9bcd;font-size:9px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.product-nav-link{margin-left:2px;padding:1px 4px;border:1px solid #7db4ff;border-radius:2px;color:#9bc8ff;text-decoration:none;font-size:9px;flex-shrink:0}
+.product-nav-link.accent{border-color:#e94560;color:#ffafbd}
+.product-push{min-height:30px;background:linear-gradient(90deg,#124d4b,#16213e);border:1px solid #2c9e87;color:#e0e0e0;box-shadow:0 0 7px rgba(47,195,163,.12)}
+.product-push .product-nav-code{color:#d9fff4}
+.product-push .product-nav-badge{color:#9de6d7}
+.product-push:hover{background:linear-gradient(90deg,#17665f,#1d2944);border-color:#45d8b5;opacity:1}
+.product-push.product-active{background:#e94560;border-color:#e94560;color:#fff}
+.product-all{background:linear-gradient(90deg,#3377EB,#1a1a2e)}
+.product-all.product-active{background:linear-gradient(90deg,#e94560,#7f2336)}
+.product-nav-category-grid{display:flex;flex-direction:column;gap:2px;margin:0 0 2px}
+.product-nav-category-grid .product-nav-button{min-width:0;min-height:27px;margin:0;padding:5px 8px;gap:6px;font-size:11px}
+.product-nav-category-grid .product-nav-code{width:34px;flex:0 0 auto;font-size:10px}
+.product-nav-category-grid .product-nav-badge{min-width:0;font-size:9px;text-overflow:ellipsis}
+.product-nav-category-grid .product-nav-status{min-width:0;margin-left:2px;font-size:9px}
+.market-nav-button{margin:0 0 4px;background:linear-gradient(90deg,#3377EB,#1a1a2e)!important;border:0!important;color:#fff!important}
+.market-nav-button:hover{opacity:.9}
+.market-nav-button.market-active{background:linear-gradient(90deg,#e94560,#7f2336)!important}
+.market-nav-button .market-nav-badge{margin-left:auto;color:#9b9bcd;font-size:9px;max-width:92px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.market-nav-button.market-active .market-nav-badge{color:#fff}
+.market-all-button{margin-bottom:4px;background:linear-gradient(90deg,#3377EB,#1a1a2e)!important;border:0!important;color:#fff!important}
+.market-all-button:hover{opacity:.9}
+
+.market-view{flex:1;min-height:0;display:flex;flex-direction:column;overflow:hidden;background:#1a1a2e}
+.market-status{padding:1px 8px;border-radius:3px;background:#0f3460;color:#9b9bcd;font-size:10px;white-space:nowrap}
+.market-status.ok{color:#27ae60}
+.market-status.warn{color:#e67e22}
+.market-status.bad{color:#e94560}
+.market-layout{display:flex;flex:1;min-height:0;overflow:hidden}
+.market-editor{width:45%;min-width:0;min-height:0;display:flex;flex-direction:column;border-right:1px solid #0f3460}
+.market-response{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column}
+
+/* 左侧所有产品目录统一使用分类标题、方法标签、接口名和本地路径。 */
+.nav.market-mode{padding:0}
+.nav.market-mode .market-endpoint{padding:4px 12px 4px 22px}
+.market-category{margin:0}
+.market-category-title{padding:6px 12px 6px 20px;background:#0f3460;color:#e94560;font-size:11px;cursor:default;border:0}
+.market-endpoint{display:block;width:100%;padding:4px 12px 4px 22px;margin:0;border:0;border-bottom:1px solid #0f346033;border-radius:0;background:transparent;color:#e0e0e0;text-align:left;font:12px "Microsoft YaHei",Arial,sans-serif;cursor:pointer;white-space:nowrap;overflow:hidden}
+.market-endpoint:hover{background:#1a1a3e}
+.market-endpoint.active{background:#e94560;color:#fff}
+.market-endpoint.active .market-endpoint-path{color:#ffd7de}
+.market-endpoint-line{display:flex;align-items:center;gap:6px;min-width:0;overflow:hidden}
+.market-method{display:inline-block;min-width:32px;padding:1px 3px;border-radius:2px;text-align:center;font:700 9px Consolas,monospace;flex-shrink:0}
+.market-method.get{background:#173d4a;color:#4EC9B0}.market-method.post{background:#60431c;color:#FFCC00}.market-method.ws{background:#3d3155;color:#d5b8ff}
+.market-endpoint-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px}
+.market-endpoint-path{display:block;margin:2px 0 0 38px;color:#71849f;font:9px Consolas,monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* 编辑器、响应区和参考示例统一使用这一套工作区视觉。 */
+.market-editor-head,.market-response-head{display:flex;align-items:center;gap:7px;padding:4px 10px;background:#0f3460;border-bottom:1px solid #0f3460;color:#e94560;font-size:11px;font-weight:bold;flex-shrink:0}
+.market-editor-head small,.market-response-head small{color:#9b9bcd;font-weight:normal;font-size:9px}
+.legacy-feedback{margin-left:auto;color:#888;font-size:10px;font-weight:normal;cursor:pointer}
+.legacy-feedback:hover{color:#4EC9B0}
+.market-connection-row{display:grid;grid-template-columns:42% minmax(0,1fr);gap:6px;align-items:center;padding:5px 8px;background:#16213e;border-bottom:1px solid #0f3460;flex-shrink:0}
+.market-connection-label{min-width:0;color:#4EC9B0;font:11px Consolas,monospace}
+.market-connection-label code{color:#4EC9B0;font:11px Consolas,monospace}
+.market-connection-label span{display:block;margin-top:2px;color:#999;font:9px/1.35 "Microsoft YaHei",Arial,sans-serif;white-space:normal}
+.market-connection-row input{width:100%;min-width:0;padding:3px 5px;background:#1a1a2e;border:1px solid #0f3460;border-radius:2px;color:#4EC9B0;font:11px Consolas,monospace;outline:none}
+.market-connection-row input:focus{border-color:#e94560}
+.market-description{padding:4px 8px;color:#999;background:#1a1a2e;border-bottom:1px solid #0f3460;font-size:10px;line-height:1.45;flex-shrink:0}
+.market-editor-scroll{flex:1;min-height:80px;overflow-y:auto;padding:5px}
+.market-editor-scroll table{width:100%;border-collapse:collapse}
+.market-editor-scroll th,.market-editor-scroll td{padding:3px 6px;text-align:left;border-bottom:1px solid #0f346033;vertical-align:top;font-size:11px}
+.market-editor-scroll th{width:42%;color:#e94560;font-weight:bold;position:sticky;top:0;background:#16213e;z-index:1}
+.market-editor-scroll th code{color:#4EC9B0;font:11px Consolas,monospace}
+.market-editor-scroll th span{display:block;margin-top:2px;color:#999;font-size:9px;line-height:1.35;font-weight:normal}
+.market-editor-scroll .ws-section-row th{padding:4px 6px;background:#0f3460;color:#e94560;font-weight:bold}
+.market-editor-scroll td input,.market-editor-scroll td select{width:100%;padding:2px 4px;background:#1a1a2e;border:1px solid #0f3460;border-radius:2px;color:#e0e0e0;font:11px Consolas,monospace;outline:none}
+.market-editor-scroll td input.market-param-internal{color:#9b9bcd;border-style:dashed;cursor:not-allowed}
+.market-editor-scroll td input.market-param-body{color:#4EC9B0}
+.market-editor-scroll td input:focus,.market-editor-scroll td select:focus{border-color:#e94560}
+.market-body{padding:4px 8px;border-top:1px solid #0f3460;background:#1a1a2e;flex-shrink:0}
+.market-body label{display:block;margin-bottom:2px;color:#999;font-size:10px}
+.market-body textarea{width:100%;height:115px;resize:vertical;padding:4px;background:#1a1a2e;border:1px solid #0f3460;border-radius:2px;color:#4EC9B0;font:11px/1.45 Consolas,monospace;outline:none}
+.market-actions{display:flex;gap:6px;padding:4px 8px;border-top:1px solid #0f3460;background:#1a1a2e;flex-shrink:0}
+.market-ws-command-actions{display:flex;align-items:center;gap:6px;width:100%}
+.market-ws-action-status{margin-left:auto;color:#888;font-size:10px;white-space:nowrap}
+.market-ws-action-status b{color:#555;font-weight:normal}
+.market-btn{padding:4px 12px;border:0;border-radius:3px;background:#555;color:#ccc;font-size:12px;cursor:pointer;white-space:nowrap;text-decoration:none}
+.market-btn:hover{opacity:.9}
+.market-btn.primary{background:#3377EB;color:#fff}
+.market-btn.green{background:#e94560;color:#fff}
+.market-info{max-height:82px;overflow:auto;padding:4px 8px;border-top:1px solid #0f3460;color:#888;background:#1a1a2e;font-size:9px;line-height:1.5;flex-shrink:0}
+.market-info code{color:#4EC9B0;font:9px Consolas,monospace;word-break:break-all}
+.market-response pre{flex:1;min-height:0;overflow:auto;margin:0;padding:8px;background:#1a1a2e;color:#d4d4d4;font:11px/1.5 Consolas,monospace;white-space:pre-wrap;word-break:break-word}
+.market-response pre.error{color:#e94560}
+.market-response-tip{padding:4px 8px;border-top:1px solid #0f3460;background:#1a1a2e;color:#888;font-size:9px;line-height:1.45;flex-shrink:0}
+.market-response-tip code{color:#4EC9B0;font:9px Consolas,monospace}
+.market-empty{text-align:center;padding:60px 20px;color:#555;font-size:16px;line-height:1.8}
+.market-empty strong{display:block;color:#555;font-size:16px;margin-bottom:4px}
+.market-empty span{font-size:11px}
+.market-empty .market-btn{margin-top:10px}
+.market-ws-message{height:210px}
+.market-ws-output{font-size:11px!important}
+.market-ws-output .market-ws-line{padding:3px 0;border-bottom:1px solid #0f346033}
+.market-ws-output .market-ws-time{color:#555;font-size:9px}
+.sample-section{border-top:1px solid #0f3460;flex:1 1 0;display:flex;flex-direction:column;min-height:50px}
+.sample-header{padding:3px 8px;background:#0f3460;font-size:10px;font-weight:bold;color:#e94560;cursor:pointer;display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.sample-header .arrow{transition:transform .2s;font-size:8px}
+.sample-header.collapsed .arrow{transform:rotate(-90deg)}
+.sample-body{flex:1;overflow-y:auto;padding:4px 8px;font-family:Consolas,monospace;font-size:10px;white-space:pre-wrap;word-break:break-all;color:#888;background:#1a1a2e}
+.sample-header.collapsed+.sample-body{display:none}
+
+@media(max-width:820px){
+  .market-layout{display:flex;flex-direction:column}
+  .market-layout .market-editor{width:100%;border-right:0}
+  .market-layout .market-response{min-height:35%;border-top:1px solid #0f3460}
+  .market-connection-row{display:flex;flex-direction:column;align-items:stretch;gap:3px}
+}
+
+@media(max-width:560px){
+  .market-connection-row{grid-template-columns:37% minmax(0,1fr);gap:4px;padding:4px 6px}
+  .market-connection-label,.market-connection-label code{font-size:10px}
+  .market-connection-label span{font-size:8px}
+  .market-connection-row input{font-size:10px}
+}

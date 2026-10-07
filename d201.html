@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="favicon.svg?v=73" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/disclaimer.css?v=20260907-disclaimer-1">
+<title>d201 实时深度看板</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Consolas,monospace;background:#0a0e17;color:#ccc;overflow:hidden;height:100vh}
+/* 顶栏 */
+.topbar{display:flex;align-items:center;gap:10px;padding:4px 8px;background:#111;border-bottom:1px solid #222}
+.topbar input{background:#1a1a2e;border:1px solid #333;color:#ccc;padding:3px 6px;font-size:12px;width:90px}
+.topbar button{background:#1a4a2e;border:1px solid #2a6a3e;color:#4c4;padding:3px 10px;cursor:pointer;font-size:12px;border-radius:3px}
+.topbar button.off{background:#4a1a1a;border-color:#6a2a2a;color:#c44}
+.topbar button.subbed{background:#1a2a4a;border-color:#2a4a6a;color:#48f}
+.topbar .st{font-size:10px;color:#888}
+.topbar .st.on{color:#4c4}
+/* 主布局 */
+.main{display:flex;height:calc(100vh - 32px)}
+.col{overflow-y:auto;overflow-x:hidden;border-right:1px solid #222;padding:4px}
+.col::-webkit-scrollbar{width:4px}
+.col::-webkit-scrollbar-thumb{background:#333;border-radius:2px}
+.col1{flex:0 0 405px} /* 全息队列 */
+.col2{flex:0 0 330px} /* 单个价位 */
+.col3{flex:0 0 280px} /* 委托 */
+.col4{flex:1 0 280px}  /* 成交 */
+.col h3{font-size:11px;color:#e94560;margin-bottom:4px;padding:2px 4px;background:#111;position:sticky;top:0;z-index:1}
+/* 全息队列 买卖行 */
+.hq-side{display:flex;flex-direction:column;gap:2px}
+.hq-label{font-size:10px;color:#888;padding:2px 0;border-bottom:1px solid #222;margin-top:4px}
+.hq-label.buy{color:#e94560}
+.hq-label.sell{color:#38a141}
+.hq-row{display:flex;align-items:center;gap:3px;font-size:10px;padding:1px 3px;background:#111;border-radius:2px;cursor:pointer}
+.hq-row:hover{background:#1a1a2e}
+.hq-row .price{width:48px;font-weight:bold;flex-shrink:0}
+.hq-row .price.buy{color:#e94560}
+.hq-row .price.sell{color:#38a141}
+.hq-row .vol{width:38px;text-align:right;flex-shrink:0}
+.hq-row .amt{width:62px;text-align:right;flex-shrink:0;color:#888}
+.hq-row .subs{display:flex;gap:1px;flex:1;justify-content:flex-end}
+.hq-row .sub{width:42px;text-align:right;font-size:9px;color:#e94560}
+.hq-row .sub-sell{width:42px;text-align:right;font-size:9px;color:#38a141}
+.hq-row .sub.big,.hq-row .sub.big-sell{font-weight:bold}
+.hq-row .sub.big{color:#e9c445}
+.hq-row .sub.big-sell{color:#3498db}
+/* 单个价位: 买红卖绿, 大单特殊 */
+.sp-buy .v,.sp-buy .a{color:#e94560}
+.sp-sell .v,.sp-sell .a{color:#38a141}
+.sp-big-buy .v,.sp-big-buy .a{color:#e9c445;font-weight:bold}
+.sp-big-sell .v,.sp-big-sell .a{color:#3498db;font-weight:bold}
+/* 委托: 方向颜色 */
+.flow-table .buy{color:#e94560}
+.flow-table .sell{color:#38a141}
+.flow-table .buy.big{color:#e9c445;font-weight:bold}
+.flow-table .sell.big{color:#3498db;font-weight:bold}
+/* 成交: 买额红 卖额绿 成交额白/金 */
+.flow-table .t-buy{color:#e94560}
+.flow-table .t-sell{color:#38a141}
+.flow-table .t-amt{color:#ccc}
+.flow-table .t-amt.big{color:#e9c445;font-weight:bold}
+/* 同委托号分组虚线框(仅框买/卖列) */
+.flow-table .t-buy.trd-grp-start,.flow-table .t-buy.trd-grp-mid,.flow-table .t-buy.trd-grp-end{border-left:2px dashed #e9c445;border-right:2px dashed #e9c445}
+.flow-table .t-buy.trd-grp-start{border-top:2px dashed #e9c445}
+.flow-table .t-buy.trd-grp-end{border-bottom:2px dashed #e9c445}
+.flow-table .t-sell.trd-grp-start-s,.flow-table .t-sell.trd-grp-mid-s,.flow-table .t-sell.trd-grp-end-s{border-left:2px dashed #3498db;border-right:2px dashed #3498db}
+.flow-table .t-sell.trd-grp-start-s{border-top:2px dashed #3498db}
+.flow-table .t-sell.trd-grp-end-s{border-bottom:2px dashed #3498db}
+.hq-row .btn-price{flex-shrink:0;font-size:9px;padding:0 4px;background:#1a3a5e;border:1px solid #2a5a8e;color:#6af;cursor:pointer;border-radius:2px;white-space:nowrap}
+.hq-row .btn-price:hover{background:#2a5a8e;color:#fff}
+.hq-row .n{width:30px;font-size:9px;color:#888;flex-shrink:0}
+.hq-row .qcnt{width:32px;text-align:right;flex-shrink:0;font-size:9px;color:#888}
+.hq-row.hq-hdr{background:#1a1a2e;color:#888;font-size:9px;cursor:default;position:sticky;top:20px;z-index:1}
+.hq-row.hq-hdr:hover{background:#1a1a2e}
+.hq-row.hq-hdr .price{color:#888!important}
+.hq-row.hq-hdr .sub{color:#888!important}
+/* 单个价位 */
+.sp-item{display:flex;align-items:center;gap:3px;font-size:10px;padding:1px 4px;border-bottom:1px solid #1a1a2e}
+.sp-item.sp-hdr{background:#1a1a2e;color:#888;font-size:9px;position:sticky;top:40px;z-index:1;cursor:default}
+.sp-item.reducing{border:2px solid #e9c445;background:#1a1a00}
+.sp-item .n{width:20px;color:#555;flex-shrink:0;text-align:right}
+.sp-item .v{width:38px;text-align:right;flex-shrink:0}
+.sp-item .a{width:62px;text-align:right;flex-shrink:0;color:#888}
+.sp-item .id{width:62px;color:#666;text-align:right;flex-shrink:0}
+.sp-item .st{width:18px;text-align:center;flex-shrink:0}
+.sp-item .st.new{color:#27ae60}
+.sp-item .st.deal{color:#3498db}
+.sp-item .st.cancel{color:#e94560}
+.sp-item .st.done{color:#888}
+.sp-summary{font-size:10px;color:#888;padding:4px;background:#111;margin-bottom:4px}
+.sp-summary span{color:#ccc}
+/* 委托/成交 流水表 */
+.flow-table{width:100%;border-collapse:collapse;font-size:10px}
+.flow-table th{position:sticky;top:20px;background:#111;color:#888;padding:2px 4px;text-align:left;font-weight:normal;border-bottom:1px solid #333;z-index:0}
+.flow-table td{padding:1px 4px;border-bottom:1px solid #1a1a2e;white-space:nowrap}
+.flow-table .time{color:#888}
+.flow-table .px{font-weight:bold}
+.flow-table .px.buy{color:#e94560}
+.flow-table .px.sell{color:#38a141}
+.flow-table .big{color:#e9c445;font-weight:bold}
+</style>
+<link rel="stylesheet" href="assets/css/design-tokens.css?v=20260901-style-4">
+<link rel="stylesheet" href="assets/css/site-shell.css?v=20260901-style-4">
+<link rel="stylesheet" href="assets/css/workbench-theme.css?v=20260901-style-4">
+</head>
+<body class="site-page site-page--dense">
+<div class="site-disclaimer" role="note" aria-label="免责声明"><span class="site-disclaimer-title">免责声明</span><span class="site-disclaimer-text">本网站及其中的数据、图表、程序与示例仅供学习、研究和技术交流使用，不构成任何投资建议、交易建议或收益承诺，不应作为买卖、持仓或其他投资决策的依据。市场有风险，投资需谨慎。</span></div>
+<div class="topbar site-header site-header--compact">
+  <a class="dense-site-brand" href="index.html" aria-label="返回工作台">
+    <img src="favicon.svg?v=73" alt="" aria-hidden="true">
+    <span>达塔接口</span>
+  </a>
+  <span class="dense-topbar-divider" aria-hidden="true"></span>
+  <span class="dense-brand-code">d201</span><span class="dense-brand-name">实时深度看板</span>
+  <a class="dense-doc-link" href="download.html#docs" target="_blank" title="d201 WebSocket API 文档">📖文档</a>
+  <input id="code" value="SZ002177" placeholder="代码" onchange="onCodeChange()">
+  <button id="btnConnect" onclick="doConnect()">连接</button>
+  <button id="btnDisconnect" class="off" onclick="doDisconnect()" style="display:none">断开</button>
+  <span class="st" id="wsSt">未连接</span>
+<span class="st" style="margin-left:auto">消息:</span><span class="st" id="msgN">0</span>
+  <span class="st">速率:</span><span class="st" id="msgR">0</span>
+</div>
+<div class="main">
+  <!-- 全息队列 -->
+  <div class="col col1">
+    <h3>全息队列 — 卖盘</h3>
+    <div id="hqSell"></div>
+    <h3>全息队列 — 买盘</h3>
+    <div id="hqBuy"></div>
+    <h3 style="cursor:pointer" onclick="var b=document.getElementById('hqLogBody');b.style.display=b.style.display==='none'?'':'none'">子队列变更日志 <span style="font-size:9px;color:#888">(点击折叠)</span></h3>
+    <div id="hqLogBody" style="max-height:200px;overflow-y:auto;font-size:9px;color:#888"></div>
+  </div>
+  <!-- 单个价位 -->
+  <div class="col col2">
+    <h3>单个价位 <span id="spTitle" style="color:#888">— 等待选择</span></h3>
+    <div class="sp-summary" id="spSummary" style="display:none"></div>
+    <div id="spList"></div>
+  </div>
+  <!-- 委托 -->
+  <div class="col col3">
+    <h3>委托</h3>
+    <table class="flow-table"><thead><tr><th>时间</th><th>价</th><th>量</th><th>金额</th><th>方向</th></tr></thead><tbody id="entBody"></tbody></table>
+  </div>
+  <!-- 成交 -->
+  <div class="col col4">
+    <h3>成交</h3>
+    <table class="flow-table"><thead><tr><th>时间</th><th>价</th><th>买(手/万)</th><th>卖(手/万)</th><th>成交(手/万)</th><th>状态</th></tr></thead><tbody id="trdBody"></tbody></table>
+  </div>
+</div>
+<script>
+// ── 状态 ──
+var ws = null, msgCount = 0, startTime = 0, code = document.getElementById('code').value;
+var hqMap = {};           // 全息队列持久层: key="price_dir" → level object
+var hqLog = [];           // 全息子记录变更日志
+var spPrice = 0, spDir = 0, spPriceCent = 0, spHadRecords = false, spHadFirst = false, spResubTimer = null;
+var entLog = [];          // 委托流水(最多500条, 新在前)
+var trdLog = [];          // 成交流水(最多500条, 新在前)
+var entSeq = new Set();   // 委托去重
+var trdSeq = new Set();   // 成交去重
+var subbedHolo = false, subbedPrice = false, subbedEnt = false, subbedTrade = false;
+
+// ── 连接 ──
+function doConnect() {
+  code = document.getElementById('code').value.trim();
+  if (!code) return;
+  if (ws) ws.close();
+  ws = new WebSocket('ws://127.0.0.1:8080/d201');
+  document.getElementById('btnConnect').style.display = 'none';
+  document.getElementById('btnDisconnect').style.display = '';
+  document.getElementById('wsSt').textContent = '连接中...';
+  msgCount = 0; startTime = Date.now();
+  ws.onopen = function() {
+    document.getElementById('wsSt').textContent = '已连接';
+    document.getElementById('wsSt').className = 'st on';
+    hqMap = {}; entLog = []; trdLog = []; spTotal = {}; spRecs = []; spIndex.clear(); spHadFirst = false;
+    entSeq.clear(); trdSeq.clear();
+    document.getElementById('hqBuy').innerHTML = ''; document.getElementById('hqSell').innerHTML = '';
+    document.getElementById('entBody').innerHTML = ''; document.getElementById('trdBody').innerHTML = '';
+    document.getElementById('spList').innerHTML = '<div style="color:#888;font-size:10px">等待选择价位</div>';
+    // 订阅全息队列+委托+成交
+    sendCmd('holoqueue', 1);
+    sendCmd('entrust', 1);
+    sendCmd('trade', 1);
+    subbedHolo = true; subbedEnt = true; subbedTrade = true;
+    document.getElementById('btnConnect').className = 'subbed';
+    document.getElementById('btnConnect').textContent = '已订阅';
+  };
+  ws.onmessage = function(e) { handleMsg(JSON.parse(e.data)); };
+  ws.onclose = function() {
+    document.getElementById('wsSt').textContent = '已断开'; document.getElementById('wsSt').className = 'st';
+    document.getElementById('btnConnect').style.display = '';
+    document.getElementById('btnDisconnect').style.display = 'none';
+    subbedHolo = subbedPrice = subbedEnt = subbedTrade = false;
+  };
+}
+function doDisconnect() { if (ws) ws.close(); }
+function sendCmd(type, enable) {
+  if (!ws || ws.readyState !== 1) return;
+  var cmd = {type:type, code:code, enable:enable};
+  if (type === 'holoqueue') { cmd.subDisplayCount = 6; /* 子队列数 1-6 */ }
+  if (type === 'entrust') cmd.count = 150;
+  if (type === 'trade') cmd.count = 60;
+  if (type === 'price') { cmd.direction = spDir; cmd.priceCent = spPriceCent; }
+  ws.send(JSON.stringify([cmd]));
+}
+
+// ── 消息分发 ──
+function handleMsg(msg) {
+  msgCount++;
+  var now = Date.now(), rate = (msgCount / ((now - startTime) / 1000)).toFixed(1);
+  document.getElementById('msgN').textContent = msgCount;
+  document.getElementById('msgR').textContent = rate;
+  if (!msg.list) return;
+  for (var i = 0; i < msg.list.length; i++) {
+    var it = msg.list[i], d = it.data;
+    if (it.type === 'info' || it.type === 'error') {
+      showMsg(it.type, it.msg || '');
+      continue;
+    }
+    if (!d) continue;
+    if (it.type === 'holoqueue') renderHoloQueue(d);
+    else if (it.type === 'price') renderSinglePrice(d);
+    else if (it.type === 'entrust') renderEntrust(d);
+    else if (it.type === 'trade') renderTrade(d);
+    else if (it.type === 'buysell') renderBuySellQ(d);
+    else if (it.type === 'thousand') renderThousand(d);
+  }
+}
+
+// ── 全息队列渲染 ──
+function renderHoloQueue(d) {
+  if (!d.levels) return;
+  for (var i = 0; i < d.levels.length; i++) {
+    var lv = d.levels[i];
+
+    // 删除信号: ct=1, rmP!=0, px=0 表示删除卖盘 rmP 价位
+    // （必须先于 price===0 检查，否则会被 continue 跳过）
+    if (lv.changeType === 1 && lv.removePrice !== 0 && lv.price === 0) {
+      delete hqMap[lv.removePrice + '_' + lv.direction];
+      hqLog.unshift({ts: new Date().toLocaleTimeString(), price: lv.removePrice, dir: lv.direction, lines: ['  -价位已清空 px=' + (lv.removePrice/100).toFixed(2)], removed: 0});
+      if (hqLog.length > 200) hqLog.length = 200;
+      renderHqLog();
+      continue;
+    }
+
+    if (lv.price === 0) continue;
+    var key = lv.price + '_' + lv.direction;
+
+    // changeType: 0=删除价位, 1=替换价位(removePrice→price), 2=更新价位
+    if (lv.changeType === 0) {
+      delete hqMap[key];
+      hqLog.unshift({ts: new Date().toLocaleTimeString(), price: lv.price, dir: lv.direction, lines: ['  -删除价位'], removed: 0});
+      if (hqLog.length > 200) hqLog.length = 200;
+      renderHqLog();
+      continue;
+    }
+    if (lv.changeType === 1 && lv.removePrice !== 0) {
+      delete hqMap[lv.removePrice + '_' + lv.direction];
+    }
+    // 获取或创建该价位的持久层
+    var entry = hqMap[key];
+    if (!entry) { entry = {}; hqMap[key] = entry; }
+    entry.price = lv.price; entry.vol = lv.volume; entry.amt = lv.amount;
+    entry.dir = lv.direction; entry.queueCount = lv.queueCount;
+    entry.displayCnt = lv.displayCnt;
+    // 子记录增量合并 (服务器只发变化的子记录)
+    if (!entry.subRecs) entry.subRecs = [];
+    var subIdx = {};
+    for (var j = 0; j < entry.subRecs.length; j++) subIdx[entry.subRecs[j].id] = j;
+    var logLines = [];
+    for (var j = 0; j < (lv.records || []).length; j++) {
+      var r = lv.records[j], idx = subIdx[r.id];
+      if (idx !== undefined) {
+        var old = entry.subRecs[idx];
+        var stChg = old.status !== r.status;
+        old.volume = r.volume; old.amount = r.amount; old.bigOrder = r.bigOrder;
+        old.prevStatus = old.status; old.status = r.status;
+        if (r.volume === 0) { old._remove = true; logLines.push('  -删除 #'+r.id); }
+        else if (stChg) logLines.push('  ~状态 #'+r.id + ' ' + old.prevStatus + '→' + r.status);
+      } else if (r.volume > 0) {
+        entry.subRecs.push({id: r.id, volume: r.volume, amount: r.amount, bigOrder: r.bigOrder, status: r.status, prevStatus: 0, isNew: true});
+        logLines.push('  +新增 #'+r.id + ' ' + r.volume + '手 ' + fmtAmt(r.amount));
+      }
+    }
+    // 移除标记删除的
+    var before = entry.subRecs.length;
+    entry.subRecs = entry.subRecs.filter(function(r){ return !r._remove; });
+    if (logLines.length > 0) {
+      hqLog.unshift({ts: new Date().toLocaleTimeString(), price: lv.price, dir: lv.direction, lines: logLines, removed: before - entry.subRecs.length});
+      if (hqLog.length > 200) hqLog.length = 200;
+      renderHqLog();
+    }
+  }
+  // 从持久层提取买卖各10档并排序
+  var buy = [], sell = [];
+  for (var k in hqMap) {
+    var row = hqMap[k];
+    if (row.dir === 0) buy.push(row); else sell.push(row);
+  }
+  buy.sort(function(a,b){ return b.price - a.price; });
+  sell.sort(function(a,b){ return b.price - a.price; });
+  renderHqSide('hqBuy', buy.slice(0, 10), 'buy');
+  renderHqSide('hqSell', sell.slice(0, 10), 'sell');
+}
+function renderHqSide(id, rows, side) {
+  var label = side === 'buy' ? '买' : '卖';
+  var h = '<div class="hq-row hq-hdr"><span class="n">档位</span><span class="price">价位</span><span class="amt">总金额</span><span class="qcnt">排队</span><span class="subs"><span class="sub">金额1</span><span class="sub">金额2</span><span class="sub">金额3</span><span class="sub">金额4</span><span class="sub">金额5</span><span class="sub">金额6</span></span><span class="btn-price" style="visibility:hidden">盯</span></div>';
+  for (var i = 0; i < rows.length; i++) {
+    var r = rows[i], pxStr = (r.price / 100).toFixed(2);
+    var nLabel = label + (side === 'sell' ? (rows.length - i) : (i + 1));
+    // 服务器顺序就是排队顺序, 直接取前6个
+    var subArr = r.subRecs || [];
+    // 找到第一个正在减少的(非0状态)
+    var subColor = side === 'buy' ? 'sub' : 'sub-sell'; // 买红卖绿基调
+    h += '<div class="hq-row" onclick="subscribePrice(' + r.price + ',' + r.dir + ')"><span class="n">' + nLabel + '</span><span class="price '+side+'">' + pxStr + '</span><span class="amt">' + fmtAmt(r.amt) + '</span><span class="qcnt">' + (r.queueCount || 0) + '</span><span class="subs">';
+    for (var j = 0; j < 6; j++) {
+      var s = subArr[j];
+      if (s) {
+        var cls = subColor;
+        if (s.bigOrder) cls += (side === 'buy' ? ' big' : ' big-sell');
+        h += '<span class="' + cls + '" title="#' + s.id + ' ' + s.volume + '手 s=' + s.status + '">' + fmtAmt(s.amount) + '</span>';
+      } else {
+        h += '<span class="sub">-</span>';
+      }
+    }
+    h += '</span><span class="btn-price" onclick="event.stopPropagation();subscribePrice(' + r.price + ',' + r.dir + ')">盯</span></div>';
+  }
+  document.getElementById(id).innerHTML = h;
+}
+function renderHqLog() {
+  var h = '';
+  for (var i = 0; i < Math.min(hqLog.length, 50); i++) {
+    var log = hqLog[i];
+    h += '<div style="border-bottom:1px solid #1a1a2e;padding:1px 4px"><span style="color:#666">[' + log.ts + ']</span> <b style="color:'+(log.dir?'#38a141':'#e94560')+'">' + (log.price/100).toFixed(2) + '</b> ('+(log.dir?'卖':'买')+')';
+    for (var j = 0; j < log.lines.length; j++) h += '<br>' + log.lines[j];
+    if (log.removed) h += '<br><span style="color:#e94560">  -移除 ' + log.removed + ' 条(amount=0)</span>';
+    h += '</div>';
+  }
+  document.getElementById('hqLogBody').innerHTML = h || '<div style="padding:4px;color:#666">等待数据...</div>';
+}
+
+// ── 单个价位渲染 ──
+var spTotal = {}, spRecs = [], spIndex = new Map(); // id→record 持久索引, O(1)查找
+function subscribePrice(price, dir) {
+  // 先退订旧价位
+  if (subbedPrice) {
+    var oldCmd = {type:'price', code:code, enable:0, direction: spDir, priceCent: spPriceCent};
+    ws.send(JSON.stringify([oldCmd]));
+  }
+  if (spResubTimer) { clearTimeout(spResubTimer); spResubTimer = null; }
+  spPrice = price; spDir = dir;
+  spPriceCent = price * 10; // 分→厘
+  spTotal = {vol:0, amt:0, cnt:0, seq:0, cur:0}; spRecs = []; spIndex.clear(); spHadRecords = false; spHadFirst = false;
+  document.getElementById('spTitle').textContent = '— ' + (price/100).toFixed(2) + ' ' + (dir === 0 ? '买' : '卖');
+  document.getElementById('spSummary').style.display = '';
+  document.getElementById('spList').innerHTML = '<div style="color:#888;font-size:10px">等待数据...</div>';
+  document.getElementById('spSummary').innerHTML = '订阅中...';
+  var cmd = {type:'price', code:code, enable:1, direction:dir, priceCent: spPriceCent};
+  ws.send(JSON.stringify([cmd]));
+  subbedPrice = true;
+}
+function renderSinglePrice(d) {
+  // 厘→分对齐 (服务器返回price是厘,要÷10才能跟holoqueue的分对齐)
+  if (Math.abs(d.price/10 - spPrice) > 1 || d.direction !== spDir) return;
+  var recs = d.records || [];
+  if (d.isFirst === 1) {
+    // 首个isFirst设基线, 后续isFirst追加records(队列长时分批推送)
+    if (!spHadFirst) {
+      spTotal = {vol: d.totalVolume, amt: d.totalAmount, cnt: d.totalCount, seq: d.seq, cur: d.curCount};
+      spHadFirst = true;
+    }
+    for (var i = 0; i < recs.length; i++) {
+      var r = recs[i];
+      if (r.volume === 0) continue;
+      var old = spIndex.get(r.id);
+      if (old === undefined) {
+        var rec = {volume: r.volume, id: r.id, amount: r.amount, bigOrder: r.bigOrder, status: r.status, prevStatus: 0, isNew: false};
+        spRecs.push(rec);
+        spIndex.set(r.id, rec);
+      } else {
+        old.volume = r.volume; old.amount = r.amount;
+        old.bigOrder = r.bigOrder; old.status = r.status;
+      }
+    }
+  } else {
+    // 增量包: 非首包totalVolume/totalAmount为0, 需自行根据差量维护汇总
+    spTotal.cur = d.curCount;
+    for (var i = 0; i < recs.length; i++) {
+      var r = recs[i], old = spIndex.get(r.id);
+      if (old !== undefined) {
+        // 差量更新汇总: 旧值出, 新值入
+        spTotal.vol += r.volume - old.volume;
+        spTotal.amt += r.amount - old.amount;
+        old.volume = r.volume; old.amount = r.amount; old.bigOrder = r.bigOrder;
+        old.prevStatus = old.status; old.status = r.status;
+        if (r.volume === 0) { old._remove = true; spTotal.cnt--; }
+      } else if (r.volume > 0) {
+        spTotal.vol += r.volume; spTotal.amt += r.amount; spTotal.cnt++;
+        var rec = {volume: r.volume, id: r.id, amount: r.amount, bigOrder: r.bigOrder, status: r.status, prevStatus: 0, isNew: true};
+        spRecs.push(rec);
+        spIndex.set(r.id, rec);
+      }
+    }
+    // 移除标记删除的, 同步清理索引
+    spRecs = spRecs.filter(function(r){
+      if (r._remove) { spIndex.delete(r.id); return false; }
+      return true;
+    });
+
+    // 价位清空检测: 之前有记录 → 现在全部清空 → 自动重订阅
+    if (spRecs.length > 0) {
+      spHadRecords = true;
+      if (spResubTimer) { clearTimeout(spResubTimer); spResubTimer = null; }
+    } else if (spHadRecords) {
+      // 价位刚被清空, 2秒后重新订阅 (复位服务器推送)
+      if (!spResubTimer) {
+        spResubTimer = setTimeout(function() {
+          spResubTimer = null;
+          subscribePrice(spPrice, spDir);
+        }, 2000);
+      }
+    }
+  }
+  var sum = document.getElementById('spSummary');
+  sum.innerHTML = '总手<span>' + (spTotal.vol || 0) + '</span> 总金额<span>' + fmtAmt(spTotal.amt || 0) + '</span> 总笔<span>' + (spTotal.cnt || 0) + '</span> 本次<span>' + (spTotal.cur || 0) + '</span>';
+  // 找到第一个有状态变化的(正在减少的)
+  var firstChange = -1;
+  for (var i = 0; i < spRecs.length; i++) {
+    if (spRecs[i].status !== 0) { firstChange = i; break; }
+  }
+  var h = '<div class="sp-item sp-hdr"><span class="n">#</span><span class="v">手数</span><span class="a">金额</span><span class="id">委托号</span><span class="st">状态</span></div>';
+  for (var i = 0; i < spRecs.length; i++) {
+    var r = spRecs[i], cls = 'sp-item';
+    if (i === firstChange) cls += ' reducing';
+    // 买盘红色 卖盘绿色, 大单特殊色
+    var rowColor = spDir === 0 ? 'sp-buy' : 'sp-sell';
+    if (r.bigOrder) rowColor += (spDir === 0 ? ' sp-big-buy' : ' sp-big-sell');
+    var stCls = 'st', stLabel = '';
+    // 量归零=即将清除, 不论status值
+    if (r.volume === 0) { stCls += ' done'; stLabel = ''; }
+    else if (r.status === 0) stLabel = '';
+    else if ([4,12,64,192].indexOf(r.status) >= 0) { stCls += ' new'; stLabel = '+'; }   // 新委托进入
+    else if ([1,9,16,128,144].indexOf(r.status) >= 0) { stCls += ' deal'; stLabel = 'T'; } // 部分成交后剩余
+    else if ([2,32].indexOf(r.status) >= 0) { stCls += ' done'; stLabel = ''; }            // 已清除
+    else stLabel = r.status;
+    h += '<div class="' + cls + ' ' + rowColor + '"><span class="n">' + (i + 1) + '</span><span class="v">' + r.volume + '</span><span class="a">' + fmtAmt(r.amount) + '</span><span class="id">' + r.id + '</span><span class="' + stCls + '">' + stLabel + '</span></div>';
+  }
+  if (spRecs.length === 0) h = '<div style="color:#888;font-size:10px">' + (spHadRecords ? '价位已清空, 2秒后自动重订阅...' : '该价位暂无排队') + '</div>';
+  document.getElementById('spList').innerHTML = h;
+}
+
+// ── 委托渲染 ──
+function renderEntrust(d) {
+  var n = Math.min(d.count || 0, 150), added = 0;
+  for (var i = 0; i < n; i++) {
+    var t = d.time ? d.time[i] : 0, oid = d.orderId ? d.orderId[i] : 0;
+    var key = t + '_' + oid;
+    if (entSeq.has(key)) continue; // 去重
+    entSeq.add(key);
+    if (entSeq.size > 1000) entSeq.clear(); // 防止无限增长, 定期清
+    entLog.unshift({
+      time: t, price: d.price ? d.price[i] : 0, volume: d.volume ? d.volume[i] : 0,
+      amount: d.amount ? d.amount[i] : 0, direction: d.direction ? d.direction[i] : 0
+    });
+    added++;
+  }
+  if (entLog.length > 500) entLog.length = 500;
+  // 渲染
+  var h = '';
+  for (var i = 0; i < entLog.length; i++) {
+    var r = entLog[i], timeStr = padTime(r.time);
+    var side = r.direction ? 'sell' : 'buy';
+    var big = r.volume >= 100 ? ' big' : '';
+    var sc = side + big;
+    h += '<tr><td class="time">' + timeStr + '</td><td class="px ' + sc + '">' + (r.price/100).toFixed(2) + '</td><td class="' + sc + '">' + r.volume + '</td><td class="' + sc + '">' + fmtAmt(r.amount) + '</td><td class="' + side + '">' + (r.direction ? '卖' : '买') + '</td></tr>';
+  }
+  document.getElementById('entBody').innerHTML = h;
+}
+
+// ── 成交渲染 ──
+function renderTrade(d) {
+  var n = Math.min(d.count || 0, 60), added = 0;
+  for (var i = 0; i < n; i++) {
+    var t = d.time ? d.time[i] : 0, sq = d.seq ? d.seq[i] : 0;
+    var key = t + '_' + sq;
+    if (trdSeq.has(key)) continue;
+    trdSeq.add(key);
+    if (trdSeq.size > 1000) trdSeq.clear();
+    trdLog.unshift({
+      time: t, seq: sq, price: d.price ? d.price[i] : 0, volume: d.volume ? d.volume[i] : 0,
+      buyVolume: d.buyVolume ? d.buyVolume[i] : 0, sellVolume: d.sellVolume ? d.sellVolume[i] : 0,
+      buyOrderId: d.buyOrderId ? d.buyOrderId[i] : 0, sellOrderId: d.sellOrderId ? d.sellOrderId[i] : 0,
+      buyAmount: d.buyAmount ? d.buyAmount[i] : 0, sellAmount: d.sellAmount ? d.sellAmount[i] : 0,
+      status: d.status ? d.status[i] : 0
+    });
+    added++;
+  }
+  if (trdLog.length > 500) trdLog.length = 500;
+  // 标记同委托号分组: 连续相同 buyOrderId 或 sellOrderId
+  for (var i = 0; i < trdLog.length; i++) {
+    var r = trdLog[i];
+    r._bGrp = 0; r._sGrp = 0;
+    if (i > 0 && trdLog[i-1].buyOrderId === r.buyOrderId) r._bGrp = 1; // 同组后续
+    if (i < trdLog.length-1 && trdLog[i+1].buyOrderId === r.buyOrderId) { if (r._bGrp === 0) r._bGrp = 2; else r._bGrp = 3; } // 首/中
+    if (i > 0 && trdLog[i-1].sellOrderId === r.sellOrderId) r._sGrp = 1;
+    if (i < trdLog.length-1 && trdLog[i+1].sellOrderId === r.sellOrderId) { if (r._sGrp === 0) r._sGrp = 2; else r._sGrp = 3; }
+  }
+  var h = '';
+  for (var i = 0; i < trdLog.length; i++) {
+    var r = trdLog[i], timeStr = padTime(r.time), vol = r.volume;
+    var big = vol >= 100 ? ' big' : '';
+    var bCls = r._bGrp === 2 ? ' trd-grp-start' : r._bGrp === 3 ? ' trd-grp-mid' : r._bGrp === 1 ? ' trd-grp-end' : '';
+    var sCls = r._sGrp === 2 ? ' trd-grp-start-s' : r._sGrp === 3 ? ' trd-grp-mid-s' : r._sGrp === 1 ? ' trd-grp-end-s' : '';
+    h += '<tr class="' + bCls + sCls + '"><td class="time">' + timeStr + '</td><td class="px">' + (r.price/100).toFixed(2) + '</td><td class="t-buy' + bCls + '">' + r.buyVolume + '(' + r.buyAmount + ')</td><td class="t-sell' + sCls + '">' + r.sellVolume + '(' + r.sellAmount + ')</td><td class="t-amt' + big + '">' + vol + '(' + (r.buyAmount + r.sellAmount) + ')</td><td>' + r.status + '</td></tr>';
+  }
+  document.getElementById('trdBody').innerHTML = h;
+}
+
+// ── 工具函数 ──
+function fmtAmt(v) {
+  if (!v) return '0';
+  var w = v / 10000; // 转为万元
+  if (w >= 100) return (w|0) + '万';
+  if (w >= 1) return w.toFixed(1) + '万';
+  return w.toFixed(2) + '万';
+}
+function padTime(t) {
+  if (!t) return '';
+  var s = '' + t;
+  while (s.length < 6) s = '0' + s;
+  return s.slice(0,2) + ':' + s.slice(2,4) + ':' + s.slice(4,6);
+}
+function onCodeChange() { doDisconnect(); }
+// ── 消息提示 ──
+function showMsg(typ, msg) {
+  var el = document.getElementById('wsSt');
+  el.textContent = typ === 'error' ? '⚠ ' + msg : msg;
+  el.className = 'st ' + (typ === 'error' ? 'err' : 'ok');
+}
+// ── 买卖队列渲染 ──
+function renderBuySellQ(d) {
+  var el = document.getElementById('hqGrid');
+  var h = '<div class="hq-row hq-hdr"><span>委买</span><span class="hdr">量</span><span>委卖</span><span class="hdr">量</span></div>';
+  for (var i = 0; i < Math.max((d.buyLevelCount||0), (d.sellLevelCount||0)); i++) {
+    h += '<div class="hq-row">';
+    h += '<span class="buy">' + (d.buyPrice ? (d.buyPrice[i]/1000).toFixed(2) : '') + '</span>';
+    h += '<span>' + fmtAmt(d.buyVolume ? d.buyVolume[i] : 0) + '</span>';
+    h += '<span class="sell">' + (d.sellPrice ? (d.sellPrice[i]/1000).toFixed(2) : '') + '</span>';
+    h += '<span>' + fmtAmt(d.sellVolume ? d.sellVolume[i] : 0) + '</span>';
+    h += '</div>';
+  }
+  el.innerHTML = h;
+}
+// ── 千档渲染 ──
+function renderThousand(d) {
+  var el = document.getElementById('hqGrid');
+  var h = '';
+  for (var i = 0; i < (d.records||[]).length; i++) {
+    var rec = d.records[i];
+    h += '<div class="hq-row">';
+    h += '<span>' + (rec.price ? (rec.price/1000).toFixed(2) : '') + '</span>';
+    h += '<span class="' + (rec.direction > 0 ? 'sell' : 'buy') + '">' + fmtAmt(rec.volume) + '</span>';
+    h += '</div>';
+  }
+  el.innerHTML = (h || '<i>暂无数据</i>');
+}
+</script>
+</body>
+</html>

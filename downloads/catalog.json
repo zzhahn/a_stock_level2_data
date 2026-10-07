@@ -1,0 +1,169 @@
+{
+  "schema": 2,
+  "docs": [
+    {
+      "name": "三平台安装启动与自测.md",
+      "path": "downloads/docs/三平台安装启动与自测.md",
+      "bytes": 13474,
+      "sha256": "179efde02e6484bdb389762754e922fac6de599ade4ae524821a84d3cc17f6b7"
+    },
+    {
+      "name": "无界面服务器与AI自动化操作.md",
+      "path": "downloads/docs/无界面服务器与AI自动化操作.md",
+      "bytes": 14137,
+      "sha256": "3450d1bb9261e874d6b39584bd40fcc8aa8fdbf606d686f78cbda7a377c9ff23"
+    },
+    {
+      "name": "d1_http_api.md",
+      "path": "downloads/docs/d1_http_api.md",
+      "bytes": 255508,
+      "sha256": "a34ff83bc2f637de2057c544f4df7be6de16f14f697d901c04a84738baa1f799"
+    },
+    {
+      "name": "d101_fields.md",
+      "path": "downloads/docs/d101_fields.md",
+      "bytes": 30356,
+      "sha256": "7a04ec36acff00471d1f034259656d47061d5d312f9d0a26304167eb8a096aec"
+    },
+    {
+      "name": "d101_ws_api.md",
+      "path": "downloads/docs/d101_ws_api.md",
+      "bytes": 61173,
+      "sha256": "9d2cdce0f1efe9d9352cafeb3452335dbe797adb85776468026b98688ceb8908"
+    },
+    {
+      "name": "d2_http_api.md",
+      "path": "downloads/docs/d2_http_api.md",
+      "bytes": 54783,
+      "sha256": "64a1008bce56b39da044357494892427e5b652445fcd8fa60973e4d6ca4405db"
+    },
+    {
+      "name": "d201_ws_api.md",
+      "path": "downloads/docs/d201_ws_api.md",
+      "bytes": 33860,
+      "sha256": "9c47351f6844a8f033f4a299dd648744f8084c30854d0527547129cb319d23f2"
+    },
+    {
+      "name": "d202_ws_api.md",
+      "path": "downloads/docs/d202_ws_api.md",
+      "bytes": 21728,
+      "sha256": "3eaf1781bda52b447346d0b2c6d79b7ed3b5407014e07d74181837d1a57abd94"
+    },
+    {
+      "name": "d3_http_api.md",
+      "path": "downloads/docs/d3_http_api.md",
+      "bytes": 20730,
+      "sha256": "5f03b03fcf172260dc45bbd7cdca30f3461884d61b0a6c305c9bf02f5db94ce9"
+    },
+    {
+      "name": "d4_http_api.md",
+      "path": "downloads/docs/d4_http_api.md",
+      "bytes": 23245,
+      "sha256": "48239e4f44b6d7b3894b1bb6e38f4384b03e97256e409321b4c502400019f75c"
+    },
+    {
+      "name": "d6_market_api.md",
+      "path": "downloads/docs/d6_market_api.md",
+      "bytes": 79419,
+      "sha256": "1ab18076fd306f94598bb5014316bdc27b8a50805098de0ad5a43d192220b7e1"
+    },
+    {
+      "name": "mac启动教程.txt",
+      "path": "downloads/docs/mac启动教程.txt",
+      "bytes": 13442,
+      "sha256": "dba4ee32d3537953bb14e3f6b97c6c853696a921c8f3f4d4676630eb72687ae9"
+    },
+    {
+      "name": "README.md",
+      "path": "downloads/docs/README.md",
+      "bytes": 1033,
+      "sha256": "5714377d893faffc40b06ff0062b9aca05156f7c657ee9f17ba9ef42ce81effc"
+    },
+    {
+      "name": "用户文档合集.zip",
+      "path": "downloads/docs/用户文档合集.zip",
+      "bytes": 160030,
+      "sha256": "4e81352a92a282d6ab1be065077c18bd445bcafbfa11e35f0f3f2f6b37a6521a"
+    }
+  ],
+  "examples": [
+    {
+      "name": "ai_control.py",
+      "path": "downloads/examples/ai_control.py",
+      "bytes": 6218,
+      "sha256": "2c1351f83a4042c4f79d7deb5bab16d28725644071d0f3e762aeb2fc9a45f17d"
+    },
+    {
+      "name": "d1_gui.py",
+      "path": "downloads/examples/d1_gui.py",
+      "bytes": 112182,
+      "sha256": "5cb19bbee21197180a9b5aa24f092c11122db9390da4ce607195fe87072b7951"
+    },
+    {
+      "name": "d101_gui.py",
+      "path": "downloads/examples/d101_gui.py",
+      "bytes": 146716,
+      "sha256": "7e182f6b53e1d71ed8602d749d35ad0c359c26eaa21d9c19e41c084f136b6612"
+    },
+    {
+      "name": "d2_gui.py",
+      "path": "downloads/examples/d2_gui.py",
+      "bytes": 208881,
+      "sha256": "988e36c11e1e824b3a65bd2545773d53b6a4b580ea5b56b8198a02c86ea1cca3"
+    },
+    {
+      "name": "d201_buysell_batch_repro.py",
+      "path": "downloads/examples/d201_buysell_batch_repro.py",
+      "bytes": 10186,
+      "sha256": "2562b8cd92448abedd53b5eb9f39129600b3cdd5d96bd7688c7dc1ce02760382"
+    },
+    {
+      "name": "d201_gui.py",
+      "path": "downloads/examples/d201_gui.py",
+      "bytes": 67439,
+      "sha256": "a086619ef2b13008ac0e7f2306a82bf97c6359d246e61cba3319d19cd7d91c73"
+    },
+    {
+      "name": "d201_l2_csv.py",
+      "path": "downloads/examples/d201_l2_csv.py",
+      "bytes": 8244,
+      "sha256": "351b61ee58c1d9e70b6af5924b33fb9924725bd9b236b4626be4fa672f53c203"
+    },
+    {
+      "name": "d202_gui.py",
+      "path": "downloads/examples/d202_gui.py",
+      "bytes": 54857,
+      "sha256": "fdff1ca75d13aeac0f79e5ca1c7adc2ef4434cd42a2ab9911a11a0affd2d7454"
+    },
+    {
+      "name": "d202_snapshot_auction.py",
+      "path": "downloads/examples/d202_snapshot_auction.py",
+      "bytes": 13560,
+      "sha256": "696a0d87139ab17a243d50bcd1dd845dabe16ee5e12b9270b813b57da9fde27c"
+    },
+    {
+      "name": "d4_gui.py",
+      "path": "downloads/examples/d4_gui.py",
+      "bytes": 119144,
+      "sha256": "9e37151aba47dc74507cafeb299b3309908e1ab0a90a0f7e5271a6ccdc629bed"
+    },
+    {
+      "name": "d6_gui.py",
+      "path": "downloads/examples/d6_gui.py",
+      "bytes": 221670,
+      "sha256": "6365048234d5c21037c0a9cfbae792eed598b5b4f228adab599f9f70fa7ba5aa"
+    },
+    {
+      "name": "privacy_display.py",
+      "path": "downloads/examples/privacy_display.py",
+      "bytes": 2336,
+      "sha256": "3ff00bcf70db6eb4a724e13d5492c980f20f545962c98eebd2ecad3cbd91cd13"
+    },
+    {
+      "name": "代码示例合集.zip",
+      "path": "downloads/examples/代码示例合集.zip",
+      "bytes": 234010,
+      "sha256": "bc45cff067c4937b5d570a7010d1c10b38b363c08f980016d517cd13eb22f785"
+    }
+  ]
+}
