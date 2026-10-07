@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://datas.lovestoblog.com/sitemap.xml
+Sitemap: https://zzhahn.github.io/a_stock_level2_data/sitemap.xml
