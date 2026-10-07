@@ -3,7 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>达塔接口</title>
+<title>达塔接口 | A股 Level-2 实时行情数据接口 · 逐笔成交 逐笔委托 十档盘口</title>
+<meta name="description" content="达塔接口提供 A 股 Level-2 实时行情数据接口：level2 逐笔成交、逐笔委托、十档盘口、委托队列、集合竞价快照、K 线与资金流向。本地 HTTP + WebSocket 接口，支持 Windows / macOS / Linux 与无界面服务器，可供量化研究与 AI Agent 程序自动调用。">
+<meta name="keywords" content="A股level2,level2实时行情,L2行情数据接口,逐笔成交,逐笔委托,十档盘口,委托队列,集合竞价快照,行情数据接口">
+<link rel="canonical" href="https://zzhahn.github.io/a_stock_level2_data/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="达塔接口">
+<meta property="og:title" content="达塔接口 | A股 Level-2 实时行情数据接口">
+<meta property="og:description" content="level2 逐笔成交、逐笔委托、十档盘口、委托队列、集合竞价快照、K线与资金流向。本地 HTTP + WebSocket 接口，支持无界面服务器与 AI Agent 自动取数。">
+<meta property="og:url" content="https://zzhahn.github.io/a_stock_level2_data/">
 <link rel="icon" href="favicon.svg?v=73" type="image/svg+xml">
 <link rel="stylesheet" href="assets/css/market_workspace.css">
 <link rel="stylesheet" href="assets/css/disclaimer.css?v=20260907-disclaimer-1">
@@ -205,7 +213,7 @@ body{font-family:"Microsoft YaHei",Arial,sans-serif;background:#1a1a2e;color:#e0
     <div class="announcement-meta"><span>版本<strong id="announcementVersion"></strong></span><span>更新时间<strong id="announcementTime"></strong></span></div>
     <div class="announcement-section-label">核心升级亮点</div>
     <ul id="announcementText" class="announcement-list"></ul>
-    <div style="margin-top:10px;padding:8px 12px;background:rgba(78,201,176,.08);border:1px dashed rgba(78,201,176,.4);border-radius:6px;font-size:12px;color:#d0d7de">📥 <strong>各平台安装包已就绪：</strong>支持 Windows、macOS (Intel 与 Apple Silicon) 及 Linux，请前往 <a href="download.html" style="color:#4EC9B0;font-weight:bold;text-decoration:underline">下载中心 ↗</a></div>
+    <div style="margin-top:10px;padding:8px 12px;background:rgba(78,201,176,.08);border:1px dashed rgba(78,201,176,.4);border-radius:6px;font-size:12px;color:#d0d7de">📥 <strong>各平台安装包已就绪：</strong>支持 Windows、macOS (Intel 与 Apple Silicon) 及 Linux，请前往 <a href="download.html" style="color:#4EC9B0;font-weight:bold;text-decoration:underline">下载中心 ↗</a>　|　📖 <a href="guide.html" style="color:#4EC9B0;font-weight:bold;text-decoration:underline">接口指南：A股 Level-2 实时行情数据接口 ↗</a></div>
     <div class="announcement-actions">
       <a href="download.html" class="announcement-btn-download">🚀 前往下载中心</a>
       <button type="button" id="announcementContinue" class="announcement-btn-enter" autofocus onclick="closeAnnouncement()">进入工作台</button>
@@ -250,6 +258,7 @@ body{font-family:"Microsoft YaHei",Arial,sans-serif;background:#1a1a2e;color:#e0
       <a data-platform-download="macos" href="downloads/programs/data_interface_macos_arm64.dmg" role="menuitem" download="data_interface_macos_arm64.dmg">macOS ARM64 (Apple Silicon)</a>
       <a data-platform-download="macos-intel" href="downloads/programs/data_interface_macos_x86_64.dmg" role="menuitem" download="data_interface_macos_x86_64.dmg">macOS Intel (x86_64)</a>
       <a data-platform-download="linux" href="downloads/programs/data_interface_linux_amd64.tar.gz" role="menuitem" download="data_interface_linux_amd64.tar.gz">Linux AMD64</a>
+      <a href="guide.html" role="menuitem">接口指南（Level-2 接口说明）</a>
     </div>
   </div>
   <span class="sep"></span>

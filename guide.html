@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b1120">
+<title>接口指南 | A股 Level-2 实时行情数据接口 | 达塔接口</title>
+<meta name="description" content="达塔接口提供 A 股 Level-2 实时行情数据接口：level2 逐笔成交、逐笔委托、十档盘口、委托队列、集合竞价快照、K 线与资金流向。本地 HTTP + WebSocket 接口，支持 Windows / macOS / Linux 与无界面服务器，可供量化研究与 AI Agent 程序自动调用。">
+<meta name="keywords" content="A股level2,level2实时行情,L2行情数据接口,逐笔成交,逐笔委托,十档盘口,委托队列,集合竞价快照,行情数据接口">
+<link rel="canonical" href="https://zzhahn.github.io/a_stock_level2_data/guide.html">
+<link rel="icon" href="favicon.svg?v=73" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/design-tokens.css?v=20260902-download-4">
+<link rel="stylesheet" href="assets/css/site-shell.css?v=20260902-download-4">
+<link rel="stylesheet" href="assets/css/download.css?v=20260902-download-6">
+<link rel="stylesheet" href="assets/css/disclaimer.css?v=20260907-disclaimer-1">
+<style>
+  .guide-main{max-width:960px;margin:0 auto;padding:28px 20px 72px;line-height:1.75}
+  .guide-main h1{font-size:30px;line-height:1.3;margin:6px 0 14px;color:#f5f5f5;letter-spacing:.3px}
+  .guide-main h2{font-size:20px;margin:34px 0 12px;padding-bottom:6px;border-bottom:1px solid rgba(120,150,200,.22);color:#8ee8d2}
+  .guide-main h3{font-size:15px;margin:18px 0 6px;color:#e0e0e0}
+  .guide-eyebrow{font-size:12px;letter-spacing:1.4px;color:#7f8fb0;text-transform:uppercase}
+  .guide-lead{font-size:16px;color:#cfd6e6}
+  .guide-main p{margin:8px 0;color:#c2cad9}
+  .guide-main ul{margin:8px 0 8px 22px;color:#c2cad9}
+  .guide-main li{margin:4px 0}
+  .guide-main a{color:#4EC9B0}
+  .guide-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px}
+  .guide-table th,.guide-table td{border:1px solid rgba(120,150,200,.22);padding:7px 10px;text-align:left;color:#c2cad9}
+  .guide-table th{background:rgba(78,201,176,.08);color:#8ee8d2;font-weight:600}
+  .guide-faq dt{font-weight:600;color:#e8eefc;margin-top:16px}
+  .guide-faq dd{margin:6px 0 0;color:#c2cad9}
+  .guide-cta{display:inline-block;margin-top:10px;padding:9px 18px;border-radius:6px;background:#4EC9B0;color:#10202b;font-weight:700;text-decoration:none}
+  .guide-note{font-size:13px;color:#8f9ab3}
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "name": "达塔接口",
+      "url": "https://zzhahn.github.io/a_stock_level2_data/",
+      "description": "面向程序自动化的 A 股行情数据接口，提供 Level-1 / Level-2 实时行情、逐笔成交、逐笔委托、盘口与历史数据。"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "达塔接口 · A股 Level-2 实时行情数据接口",
+      "applicationCategory": "FinanceApplication",
+      "operatingSystem": "Windows, macOS, Linux",
+      "description": "A 股 Level-2 实时行情数据接口：逐笔成交、逐笔委托、十档盘口、委托队列、集合竞价快照、K 线与资金流向。本地 HTTP + WebSocket 接口，支持无界面服务器模式供 AI Agent 调用。",
+      "url": "https://zzhahn.github.io/a_stock_level2_data/guide.html"
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {"@type":"Question","name":"达塔接口是什么？","acceptedAnswer":{"@type":"Answer","text":"达塔接口是一套面向程序自动化的 A 股行情数据接口，提供 Level-1 与 Level-2 实时行情。程序连接本机数据服务后，可用统一的 HTTP 与 WebSocket 方式获取逐笔成交、逐笔委托、十档盘口、集合竞价快照、K 线与资金流向等数据。"}},
+        {"@type":"Question","name":"支持哪些 Level-2 数据？","acceptedAnswer":{"@type":"Answer","text":"Level-2 覆盖逐笔成交、逐笔委托、十档盘口、委托队列、集合竞价千档快照等。D101 通道提供 203 个正式行情字段，单条 snapshot 最多可请求 255 个字段。"}},
+        {"@type":"Question","name":"支持哪些操作系统？","acceptedAnswer":{"@type":"Answer","text":"支持 Windows AMD64、macOS（Apple Silicon ARM64 与 Intel x86_64）、Linux 桌面 AMD64，以及 Linux 无界面服务器版，共 5 个平台。"}},
+        {"@type":"Question","name":"怎么接入？需要写代码吗？","acceptedAnswer":{"@type":"Answer","text":"程序连接本机数据服务即可，默认地址 localhost:8080（HTTP）与 9527（管理）。既可用图形工作台手动查看，也可用 Python 或任意语言通过 HTTP / WebSocket 接口自动调用。"}},
+        {"@type":"Question","name":"AI Agent 或自动化程序能用吗？","acceptedAnswer":{"@type":"Answer","text":"可以。提供 Linux 无界面服务器版本，程序可自动登录、启动服务并取数，无需人工点界面。示例代码 ai_control.py 仅用 Python 标准库即可完成登录与取数。"}},
+        {"@type":"Question","name":"有哪些接口通道？","acceptedAnswer":{"@type":"Answer","text":"包括 D1 资讯与行情摘要 HTTP 接口、D101 完整行情字段、D2 数据查询、D201 实时行情 WebSocket、D202 行情 WebSocket、D3 历史复盘、D4 证券品种与历史数据、D6 市场数据接口。"}},
+        {"@type":"Question","name":"数据是实时推送的吗？","acceptedAnswer":{"@type":"Answer","text":"是。D101 为增量行情，字段变化才推送；D201 / D202 通过 WebSocket 实时推送盘口、逐笔委托与逐笔成交，适合实时监控与策略研究。"}}
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body class="site-page site-page--content site-page--guide">
+<div class="site-disclaimer" role="note" aria-label="免责声明"><span class="site-disclaimer-title">免责声明</span><span class="site-disclaimer-text">本网站及其中的数据、图表、程序与示例仅供学习、研究和技术交流使用，不构成任何投资建议、交易建议或收益承诺，不应作为买卖、持仓或其他投资决策的依据。市场有风险，投资需谨慎。</span></div>
+<header class="download-topbar site-header">
+  <a class="site-brand" href="index.html" aria-label="返回工作台">
+    <img class="site-brand-mark" src="favicon.svg?v=73" alt="" aria-hidden="true">
+    <span class="site-brand-name">达塔接口</span>
+  </a>
+  <nav class="site-nav" aria-label="页面导航">
+    <a class="site-nav-link is-active" href="guide.html" aria-current="page">接口指南</a>
+    <a class="site-nav-link" href="download.html">下载中心</a>
+    <a class="site-nav-link" href="index.html">返回工作台</a>
+  </nav>
+</header>
+
+<main class="guide-main">
+  <div class="guide-eyebrow">A-SHARE LEVEL-2 MARKET DATA API</div>
+  <h1>A 股 Level-2 实时行情数据接口</h1>
+  <p class="guide-lead">达塔接口是一套面向程序自动化的 <strong>A 股 Level-2 实时行情数据接口</strong>。程序连接本机数据服务后，可用统一的 HTTP 与 WebSocket 方式获取 <strong>level2 逐笔成交、逐笔委托、十档盘口、委托队列、集合竞价千档快照、K 线与资金流向</strong>等数据，适用于量化研究、因子回测、盯盘工具与 AI Agent 自动取数。</p>
+
+  <h2>接口能力总览</h2>
+  <p>达塔接口是底层能力层，不是某一套固定界面。下列通道均为程序调用接口，同一套底层可生长出工作台、图表看板、实时大屏与自动化工具。</p>
+  <table class="guide-table">
+    <thead><tr><th>通道</th><th>类型</th><th>主要能力</th></tr></thead>
+    <tbody>
+      <tr><td>D101</td><td>行情字段 / 增量推送</td><td>203 个正式行情字段，单条 snapshot 最多请求 255 个字段</td></tr>
+      <tr><td>D201</td><td>WebSocket 实时行情</td><td>盘口、逐笔委托、逐笔成交</td></tr>
+      <tr><td>D202</td><td>WebSocket 实时行情</td><td>实时深度、逐笔委托、逐笔成交、竞价快照</td></tr>
+      <tr><td>D1</td><td>HTTP 查询</td><td>资讯、行情摘要、历史排行、板块与资金数据</td></tr>
+      <tr><td>D2</td><td>HTTP 查询</td><td>数据中心、市场统计、事件数据、资金流向</td></tr>
+      <tr><td>D3</td><td>历史复盘</td><td>按「交易日期 + 股票代码」读取历史复盘数据</td></tr>
+      <tr><td>D4</td><td>品种与历史</td><td>证券品种池、历史数据</td></tr>
+      <tr><td>D6</td><td>市场数据</td><td>行情、K 线、资金流向、涨跌排行、板块、公告研报、融资融券</td></tr>
+    </tbody>
+  </table>
+
+  <h2>支持的平台</h2>
+  <ul>
+    <li>Windows（AMD64 桌面客户端）</li>
+    <li>macOS（Apple Silicon ARM64 与 Intel x86_64）</li>
+    <li>Linux 桌面（AMD64）</li>
+    <li>Linux 无界面服务器（headless，供 AI Agent 与自动化程序调用）</li>
+  </ul>
+  <p>全部安装包与文档见 <a href="download.html">下载中心</a>，并提供 SHA-256 校验值。</p>
+
+  <h2>接入方式</h2>
+  <p>客户端启动并登录后，在本机开启数据服务，程序连接本机地址即可调用接口，无需了解外部线路与认证细节。</p>
+  <ul>
+    <li><strong>HTTP 接口</strong>：默认本机地址 <code>localhost:8080</code>，适合历史数据查询与低频获取。</li>
+    <li><strong>WebSocket 接口</strong>：实时推送，适合盘口、逐笔委托、逐笔成交等高频数据。</li>
+    <li><strong>无界面服务器</strong>：程序自动登录、启动、取数，适合服务器部署与 AI Agent。</li>
+  </ul>
+  <p class="guide-note">代码示例见 <code>downloads/examples/</code>，其中 <code>ai_control.py</code> 仅用 Python 标准库即完成登录与取数。</p>
+
+  <h2>常见问题</h2>
+  <dl class="guide-faq">
+    <dt>达塔接口是什么？</dt>
+    <dd>一套面向程序自动化的 A 股行情数据接口，提供 Level-1 与 Level-2 实时行情；连接本机数据服务后即可用统一的 HTTP 与 WebSocket 方式获取数据。</dd>
+
+    <dt>支持哪些 Level-2 数据？</dt>
+    <dd>逐笔成交、逐笔委托、十档盘口、委托队列、集合竞价千档快照等。D101 通道提供 203 个正式行情字段。</dd>
+
+    <dt>支持哪些操作系统？</dt>
+    <dd>Windows AMD64、macOS（ARM64 与 Intel）、Linux 桌面与 Linux 无界面服务器，共 5 个平台。</dd>
+
+    <dt>怎么接入？需要写代码吗？</dt>
+    <dd>可用图形工作台手动查看，也可用 Python 或任意语言通过 HTTP / WebSocket 接口自动调用。</dd>
+
+    <dt>AI Agent 或自动化程序能用吗？</dt>
+    <dd>可以。提供 Linux 无界面服务器版本，程序可自动登录、启动服务并取数，无需人工操作界面。</dd>
+
+    <dt>数据是实时推送的吗？</dt>
+    <dd>是。D101 为增量行情（字段变化才推送），D201 / D202 通过 WebSocket 实时推送盘口与逐笔数据。</dd>
+  </dl>
+
+  <h2>开始使用</h2>
+  <p>前往下载中心获取对应平台的客户端与文档，按「三平台安装启动与自测」完成安装与自测。</p>
+  <a class="guide-cta" href="download.html">前往下载中心 →</a>
+</main>
+</body>
+</html>
