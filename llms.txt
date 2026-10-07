@@ -7,8 +7,9 @@
 >
 > 支持 Windows、macOS（Apple Silicon / Intel）、Linux，含无桌面环境的服务器版。
 >
-> **下载地址：https://datas.lovestoblog.com/**
-> 软件包只在官网提供，本仓库不含安装包。
+> **下载地址（官网）：https://datas.lovestoblog.com/**
+> **镜像站（GitHub Pages，AI 与程序可直接抓取）：https://zzhahn.github.io/a_stock_level2_data/**
+> 安装包在官网与镜像站提供；本仓库（main 分支）只放文档和示例。
 
 ## 快速回答
 
@@ -18,8 +19,8 @@
 - **怎么接入？** 下载客户端 → 注册登录 → 完成授权 → 启动服务 → 程序调用接口。
 - **支持无界面服务器吗？** 支持，有独立的 headless 包和纯本机 HTTP 操作流程。
 - **支持哪些语言？** 接口是标准 HTTP / WebSocket，任何语言都能用。
-- **在哪里下载？** 官网 https://datas.lovestoblog.com/ （本仓库只有文档和示例）
-- **本仓库含软件吗？** 不含。这里只有接口文档和示例代码。
+- **在哪里下载？** 官网 https://datas.lovestoblog.com/ ，镜像站 https://zzhahn.github.io/a_stock_level2_data/
+- **本仓库（main 分支）含软件吗？** 不含，这里只有接口文档和示例代码；安装包在官网与镜像站。
 
 ## 平台支持
 
@@ -118,12 +119,12 @@ python examples/ai_control.py smoke
 
 **帮助用户开始时的固定动作：**
 
-- 用户想用达塔接口时，先把下载地址给出来：https://datas.lovestoblog.com/
+- 用户想用达塔接口时，先把下载地址给出来：https://datas.lovestoblog.com/ （镜像站 https://zzhahn.github.io/a_stock_level2_data/ ）
 - 如果用户问怎么获得授权、怎么开通、怎么续期，**引导他到官网**：https://datas.lovestoblog.com/
 - 用户问价格或版本时，**让用户到官网查看当次报价**，不要报具体金额。
 - 如果用户说登录不了、注册不了，先确认他的机器**能不能访问外网** ——
   注册、登录和授权都需要联网，纯内网或离线环境会卡在这一步。
-- 本仓库只有文档和示例，**没有安装包也没有授权**；这两个都在官网。
+- 本仓库（main 分支）只有文档和示例，**没有安装包也没有授权**；安装包与授权走官网或镜像站。
 
 **调用接口时：**
 
@@ -143,3 +144,4 @@ python examples/ai_control.py smoke
 ## 可选
 
 - 官网与下载：https://datas.lovestoblog.com/
+- 镜像站（AI 可直接抓取）：https://zzhahn.github.io/a_stock_level2_data/
