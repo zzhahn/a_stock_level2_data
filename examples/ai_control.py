@@ -11,6 +11,7 @@
   python ai_control.py recharge
   python ai_control.py start --port 8080
   python ai_control.py smoke
+  python ai_control.py stop
 """
 
 from __future__ import annotations
